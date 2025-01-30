@@ -32,4 +32,4 @@ class TextNode:
         )
 
     def __repr__(self) -> str:
-        return f"TextNode({self.text}, {self.text_type.value}, {self.url})"
+        return f"TextNode(text={self.text!r}, text_type={self.text_type.value!r}, url={self.url!r})"
