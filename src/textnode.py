@@ -12,6 +12,12 @@ class TextType(Enum):
 
 class TextNode:
     def __init__(self, text: str, text_type: TextType, url: str | None = None) -> None:
+        """
+        Args:
+            text: The text content of the node.
+            text_type: The type of text this node contains, which is a member of the TextType enum.
+            url: The URL of the link or image, if the text is a link. Default to None if nothing is passed in.
+        """
         self.text = text
         self.text_type = text_type
         self.url = url
