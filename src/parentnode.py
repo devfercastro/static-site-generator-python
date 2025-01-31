@@ -7,7 +7,7 @@ class ParentNode(HTMLNode):
         self,
         tag: str | None = None,
         children: List["HTMLNode"] | None = None,
-        props: Dict[str, str] | None = None,
+        props: Dict[str, str | None] | None = None,
     ) -> None:
         super().__init__(tag=tag, value=None, children=children, props=props)
 
