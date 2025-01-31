@@ -7,7 +7,7 @@ class HTMLNode:
         tag: str | None = None,
         value: str | None = None,
         children: List["HTMLNode"] | None = None,
-        props: Dict[str, str] | None = None,
+        props: Dict[str, str | None] | None = None,
     ) -> None:
         """
         Args:
@@ -41,3 +41,13 @@ class HTMLNode:
 
     def __repr__(self) -> str:
         return f"HTMLNode(tag={self.tag!r}, value={self.value!r}, children={self.children!r}, props={self.props!r})"
+
+    def __eq__(self, other) -> bool:
+        if not isinstance(other, HTMLNode):
+            raise ValueError("Must be HTMLNode instance")
+        return (
+            self.tag == other.tag
+            and self.value == other.value
+            and self.children == other.children
+            and self.props == other.props
+        )
