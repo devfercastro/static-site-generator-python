@@ -1,3 +1,4 @@
+import re
 from typing import List
 from textnode import TextNode, TextType
 from leafnode import LeafNode
@@ -72,3 +73,31 @@ def split_nodes_delimiter(
                     new_nodes.append(TextNode(part, text_type))
 
     return new_nodes
+
+
+def extract_markdown_images(text: str):
+    """
+    Extracts the image alt text and url from inline markdown
+
+    Args:
+        text: Raw markdown text that contains the image or images
+
+    Returns:
+        List[Tuple[str, str]]: The list of tuples each one being (image alt text, image url)
+    """
+    regex = r"!\[(.*?)\]\((.*?)\)"
+    return re.findall(regex, text)
+
+
+def extract_markdown_links(text: str):
+    """
+    Extracts the link text and url from inline markdown
+
+    Args:
+        text: Raw markdown text that contains the link or links
+
+    Returns:
+        List[Tuple[str, str]]: The list of tuples each one beign (link text, link url)
+    """
+    regex = r"\[(.*?)\]\((.*?)\)"
+    return re.findall(regex, text)
