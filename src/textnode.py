@@ -34,30 +34,3 @@ class TextNode:
 
     def __repr__(self) -> str:
         return f"TextNode(text={self.text!r}, text_type={self.text_type.value!r}, url={self.url!r})"
-
-
-def text_node_to_html_node(text_node: TextNode):
-    """
-    Converts a TextNode to an LeafNode
-    Args:
-        text_node: The text object to be converted
-    """
-    out = None
-    match text_node.text_type:
-        case TextType.TEXT:
-            out = LeafNode(tag=None, value=text_node.text)
-        case TextType.BOLD:
-            out = LeafNode(tag="b", value=text_node.text)
-        case TextType.ITALIC:
-            out = LeafNode(tag="i", value=text_node.text)
-        case TextType.CODE:
-            out = LeafNode(tag="code", value=text_node.text)
-        case TextType.LINK:
-            out = LeafNode(tag="a", value=text_node.text, props={"href": text_node.url})
-        case TextType.IMAGE:
-            out = LeafNode(
-                tag="img", value="", props={"src": text_node.url, "alt": text_node.text}
-            )
-        case _:
-            raise Exception("Incorrect text type")
-    return out
