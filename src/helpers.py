@@ -5,9 +5,16 @@ from leafnode import LeafNode
 
 def text_node_to_html_node(text_node: TextNode):
     """
-    Converts a TextNode to an LeafNode
+    Converts a TextNode to a corresponding LeafNode
+
     Args:
-        text_node: The text object to be converted
+        text_node: The TextNode instances to be converted
+
+    Return:
+        LeafNode: The new LeafNode with the corresponding opts
+
+    Raises:
+        Exception: If the text_node has an unrecognized text type
     """
     out = None
     match text_node.text_type:
@@ -34,12 +41,18 @@ def split_nodes_delimiter(
     old_nodes: List[TextNode], delimiter: str, text_type: TextType
 ):
     """
-    It takes a list of "old nodes", a delimiter, and a text type. Returns a new list of nodes, where any "text" type nodes in the input list are (potentially) split into multiple nodes based on the syntax.
-    Args:
-        old_nodes: The list of nodes to be transform
-        delimiter: The sytax specifier
-        text_type: The type of the node within the delimiters
+    Split a list of TextNode using a specified delimiter and convert enclosed to a new TextNode with the passed type (text_type)
 
+    Args:
+        old_nodes: The list of TextNode to be transform
+        delimiter: The sytax specifier
+        text_type: The new text type to apply to enclosed segments
+
+    Returns:
+        List[TextNode]: The new list of TextNode objects resulting from the split and conversion.
+
+    Raises:
+        Exception: If a text of a TextNode has an odd number of delimiters
     """
     new_nodes: List[TextNode] = []
 
@@ -50,11 +63,12 @@ def split_nodes_delimiter(
             if node.text.count(delimiter) % 2 != 0:
                 raise Exception(f'Unamtched delimiter "{delimiter}"')
             parts = node.text.split(delimiter)
+
             for i, part in enumerate(parts):
-                if i % 2 == 0:
+                if i % 2 == 0:  # odd parts aren't the target
                     if part:
                         new_nodes.append(TextNode(part, TextType.TEXT))
-                else:
+                else:  # even parts are the special nodes
                     new_nodes.append(TextNode(part, text_type))
 
     return new_nodes
