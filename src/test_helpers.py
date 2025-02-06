@@ -1,3 +1,4 @@
+import re
 import unittest
 
 from helpers import (
@@ -5,6 +6,7 @@ from helpers import (
     text_node_to_html_node,
     extract_markdown_images,
     extract_markdown_links,
+    split_nodes_link,
 )
 from textnode import TextNode, TextType
 from leafnode import LeafNode
@@ -169,6 +171,72 @@ class TestExtractMarkdownLinks(unittest.TestCase):
             ("to youtube", "https://www.youtube.com/@bootdotdev"),
         ]
         result = extract_markdown_links(text)
+        self.assertEqual(result, expected)
+
+
+class Link:
+    def __init__(self, raw: str):
+        self.raw = raw
+        self.alt_text, self.url = re.findall(r"\[(.*?)\]\((.*?)\)", raw)[0]
+
+
+class TestSplitNodesLink(unittest.TestCase):
+    link1 = Link("[to boot dev](https://www.boot.dev)")
+    link2 = Link("[to youtube](https://www.youtube.com/@bootdotdev)")
+    link3 = Link("[example](https://example.com)")
+
+    def test_split_nodes_link_no_link(self):
+        node = TextNode("This is plain text without any links.", TextType.TEXT)
+        expected = [node]
+        result = split_nodes_link([node])
+        self.assertEqual(result, expected)
+
+    def test_split_nodes_link_start_link(self):
+        trailing_text = " trailing text for test."
+        node = TextNode(self.link1.raw + trailing_text, TextType.TEXT)
+        expected = [
+            TextNode(self.link1.alt_text, TextType.LINK, self.link1.url),
+            TextNode(trailing_text, TextType.TEXT),
+        ]
+        result = split_nodes_link([node])
+        self.assertEqual(result, expected)
+
+    def test_split_nodes_link_end_link(self):
+        leading_text = "leading text for test "
+        node = TextNode(leading_text + self.link1.raw, TextType.TEXT)
+        expected = [
+            TextNode(leading_text, TextType.TEXT),
+            TextNode(self.link1.alt_text, TextType.LINK, self.link1.url),
+        ]
+        result = split_nodes_link([node])
+        self.assertEqual(result, expected)
+
+    def test_split_nodes_link_multiple_links(self):
+        node = TextNode(
+            f"This is text with a link {self.link1.raw} and {self.link2.raw}",
+            TextType.TEXT,
+        )
+        expected = [
+            TextNode("This is text with a link ", TextType.TEXT),
+            TextNode(self.link1.alt_text, TextType.LINK, self.link1.url),
+            TextNode(" and ", TextType.TEXT),
+            TextNode(self.link2.alt_text, TextType.LINK, self.link2.url),
+        ]
+        result = split_nodes_link([node])
+        self.assertEqual(result, expected)
+
+    def test_split_nodes_link_mixed_nodes(self):
+        node1 = TextNode("This is plain text.", TextType.TEXT)
+        node2 = TextNode(f"This has a {self.link1.raw}.", TextType.TEXT)
+        node3 = TextNode("Another plain text.", TextType.TEXT)
+        expected = [
+            node1,
+            TextNode("This has a ", TextType.TEXT),
+            TextNode(self.link1.alt_text, TextType.LINK, self.link1.url),
+            TextNode(".", TextType.TEXT),
+            node3,
+        ]
+        result = split_nodes_link([node1, node2, node3])
         self.assertEqual(result, expected)
 
 
