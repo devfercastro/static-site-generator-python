@@ -6,6 +6,7 @@ from helpers import (
     text_node_to_html_node,
     extract_markdown_images,
     extract_markdown_links,
+    split_nodes_image,
     split_nodes_link,
 )
 from textnode import TextNode, TextType
@@ -171,6 +172,90 @@ class TestExtractMarkdownLinks(unittest.TestCase):
             ("to youtube", "https://www.youtube.com/@bootdotdev"),
         ]
         result = extract_markdown_links(text)
+        self.assertEqual(result, expected)
+
+
+class Image:
+    def __init__(self, raw: str):
+        self.raw = raw
+        self.alt, self.url = re.findall(r"!\[(.*?)\]\((.*?)\)", raw)[0]
+
+
+class TestSplitNodesImage(unittest.TestCase):
+    image1 = Image("![rick roll](https://i.imgur.com/aKaOqIh.gif)")
+    image2 = Image("![obi wan](https://i.imgur.com/fJRm4Vk.jpeg)")
+    image3 = Image("![example](https://example.com/image.png)")
+
+    def test_split_nodes_image_no_image(self):
+        """Test when there are no images in the text."""
+        node = TextNode("This is plain text without any images.", TextType.TEXT)
+        expected = [node]
+        result = split_nodes_image([node])
+        self.assertEqual(result, expected)
+
+    def test_split_nodes_image_start_image(self):
+        """Test when an image is at the start of the text."""
+        trailing_text = " trailing text for test."
+        node = TextNode(self.image1.raw + trailing_text, TextType.TEXT)
+        expected = [
+            TextNode(self.image1.alt, TextType.IMAGE, self.image1.url),
+            TextNode(trailing_text, TextType.TEXT),
+        ]
+        result = split_nodes_image([node])
+        self.assertEqual(result, expected)
+
+    def test_split_nodes_image_end_image(self):
+        """Test when an image is at the end of the text."""
+        leading_text = "leading text for test "
+        node = TextNode(leading_text + self.image1.raw, TextType.TEXT)
+        expected = [
+            TextNode(leading_text, TextType.TEXT),
+            TextNode(self.image1.alt, TextType.IMAGE, self.image1.url),
+        ]
+        result = split_nodes_image([node])
+        self.assertEqual(result, expected)
+
+    def test_split_nodes_image_multiple_images(self):
+        """Test when there are multiple images in the text."""
+        node = TextNode(
+            f"This is text with an image {self.image1.raw} and {self.image2.raw}",
+            TextType.TEXT,
+        )
+        expected = [
+            TextNode("This is text with an image ", TextType.TEXT),
+            TextNode(self.image1.alt, TextType.IMAGE, self.image1.url),
+            TextNode(" and ", TextType.TEXT),
+            TextNode(self.image2.alt, TextType.IMAGE, self.image2.url),
+        ]
+        result = split_nodes_image([node])
+        self.assertEqual(result, expected)
+
+    def test_split_nodes_image_mixed_nodes(self):
+        """Test when there are mixed nodes (text, images, and other types)."""
+        node1 = TextNode("This is plain text.", TextType.TEXT)
+        node2 = TextNode(f"This has an {self.image1.raw}.", TextType.TEXT)
+        node3 = TextNode("Another plain text.", TextType.TEXT)
+        expected = [
+            node1,
+            TextNode("This has an ", TextType.TEXT),
+            TextNode(self.image1.alt, TextType.IMAGE, self.image1.url),
+            TextNode(".", TextType.TEXT),
+            node3,
+        ]
+        result = split_nodes_image([node1, node2, node3])
+        self.assertEqual(result, expected)
+
+    def test_split_nodes_image_consecutive_images(self):
+        """Test when there are consecutive images in the text."""
+        node = TextNode(
+            f"{self.image1.raw}{self.image2.raw}{self.image3.raw}", TextType.TEXT
+        )
+        expected = [
+            TextNode(self.image1.alt, TextType.IMAGE, self.image1.url),
+            TextNode(self.image2.alt, TextType.IMAGE, self.image2.url),
+            TextNode(self.image3.alt, TextType.IMAGE, self.image3.url),
+        ]
+        result = split_nodes_image([node])
         self.assertEqual(result, expected)
 
 

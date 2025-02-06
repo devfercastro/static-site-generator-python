@@ -103,7 +103,53 @@ def extract_markdown_links(text: str) -> List[Tuple[str, str]]:
 
 
 def split_nodes_image(old_nodes: List[TextNode]):
-    pass
+    """
+    Splits a list of TextNode containing markdown images into a list of TextNode where the images are separated
+
+    Args:
+        old_nodes: List of TextNode to process
+
+    Returns:
+        List[TextNode]: New list of TextNode object with images split into individual nodes
+    """
+    new_nodes: List[TextNode] = []
+
+    for node in old_nodes:
+        if node.text_type != TextType.TEXT:
+            new_nodes.append(node)
+        else:
+            text = node.text
+            inline_images = extract_markdown_images(text)
+
+            # if there are no images, skip
+            if len(inline_images) == 0:
+                new_nodes.append(node)
+                continue
+
+            for image in inline_images:
+                image_alt = image[0]
+                image_url = image[1]
+
+                # split just once the text using the current image as delimiter
+                # capture the text before and after the image
+                pre_image_text, post_image_text = text.split(
+                    f"![{image_alt}]({image_url})", 1
+                )
+
+                # if not empty string append the text before the image
+                if pre_image_text != "":
+                    new_nodes.append(TextNode(pre_image_text, TextType.TEXT))
+                # then append the image (to preserve the order)
+                new_nodes.append(TextNode(image_alt, TextType.IMAGE, image_url))
+
+                # continue with text after image
+                text = post_image_text
+
+            # append the remaining text
+            if text != "":
+                new_nodes.append(TextNode(text, TextType.TEXT))
+
+    return new_nodes
 
 
 def split_nodes_link(old_nodes: List[TextNode]):
@@ -131,20 +177,20 @@ def split_nodes_link(old_nodes: List[TextNode]):
                 continue
 
             for link in inline_links:
-                link_alt = link[0]
+                link_text = link[0]
                 link_url = link[1]
 
                 # split just once the text using the current link as delimiter
                 # capture the text before and after the link
                 pre_link_text, post_link_text = text.split(
-                    f"[{link_alt}]({link_url})", 1
+                    f"[{link_text}]({link_url})", 1
                 )
 
-                # if not empty string append `normal_text`
+                # if not empty string append before the link
                 if pre_link_text != "":
                     new_nodes.append(TextNode(pre_link_text, TextType.TEXT))
                 # then append the link (to preserve the order)
-                new_nodes.append(TextNode(link_alt, TextType.LINK, link_url))
+                new_nodes.append(TextNode(link_text, TextType.LINK, link_url))
 
                 # continue with text after link
                 text = post_link_text
