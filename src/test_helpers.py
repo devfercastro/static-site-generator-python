@@ -177,7 +177,7 @@ class TestExtractMarkdownLinks(unittest.TestCase):
 class Link:
     def __init__(self, raw: str):
         self.raw = raw
-        self.alt_text, self.url = re.findall(r"\[(.*?)\]\((.*?)\)", raw)[0]
+        self.text, self.url = re.findall(r"\[(.*?)\]\((.*?)\)", raw)[0]
 
 
 class TestSplitNodesLink(unittest.TestCase):
@@ -195,7 +195,7 @@ class TestSplitNodesLink(unittest.TestCase):
         trailing_text = " trailing text for test."
         node = TextNode(self.link1.raw + trailing_text, TextType.TEXT)
         expected = [
-            TextNode(self.link1.alt_text, TextType.LINK, self.link1.url),
+            TextNode(self.link1.text, TextType.LINK, self.link1.url),
             TextNode(trailing_text, TextType.TEXT),
         ]
         result = split_nodes_link([node])
@@ -206,7 +206,7 @@ class TestSplitNodesLink(unittest.TestCase):
         node = TextNode(leading_text + self.link1.raw, TextType.TEXT)
         expected = [
             TextNode(leading_text, TextType.TEXT),
-            TextNode(self.link1.alt_text, TextType.LINK, self.link1.url),
+            TextNode(self.link1.text, TextType.LINK, self.link1.url),
         ]
         result = split_nodes_link([node])
         self.assertEqual(result, expected)
@@ -218,9 +218,9 @@ class TestSplitNodesLink(unittest.TestCase):
         )
         expected = [
             TextNode("This is text with a link ", TextType.TEXT),
-            TextNode(self.link1.alt_text, TextType.LINK, self.link1.url),
+            TextNode(self.link1.text, TextType.LINK, self.link1.url),
             TextNode(" and ", TextType.TEXT),
-            TextNode(self.link2.alt_text, TextType.LINK, self.link2.url),
+            TextNode(self.link2.text, TextType.LINK, self.link2.url),
         ]
         result = split_nodes_link([node])
         self.assertEqual(result, expected)
@@ -232,11 +232,23 @@ class TestSplitNodesLink(unittest.TestCase):
         expected = [
             node1,
             TextNode("This has a ", TextType.TEXT),
-            TextNode(self.link1.alt_text, TextType.LINK, self.link1.url),
+            TextNode(self.link1.text, TextType.LINK, self.link1.url),
             TextNode(".", TextType.TEXT),
             node3,
         ]
         result = split_nodes_link([node1, node2, node3])
+        self.assertEqual(result, expected)
+
+    def test_split_nodes_link_consecutive_links(self):
+        node = TextNode(
+            f"{self.link1.raw}{self.link2.raw}{self.link3.raw}", TextType.TEXT
+        )
+        expected = [
+            TextNode(self.link1.text, TextType.LINK, self.link1.url),
+            TextNode(self.link2.text, TextType.LINK, self.link2.url),
+            TextNode(self.link3.text, TextType.LINK, self.link3.url),
+        ]
+        result = split_nodes_link([node])
         self.assertEqual(result, expected)
 
 
