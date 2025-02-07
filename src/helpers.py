@@ -63,13 +63,13 @@ def split_nodes_delimiter(
         else:
             if node.text.count(delimiter) % 2 != 0:
                 raise Exception(f'Unamtched delimiter "{delimiter}"')
-            parts = node.text.split(delimiter)
-            for i, part in enumerate(parts):
+            sections = node.text.split(delimiter)
+            for i, section in enumerate(sections):
                 if i % 2 == 0:  # odd parts aren't the target
-                    if part:
-                        new_nodes.append(TextNode(part, TextType.TEXT))
+                    if section != "":
+                        new_nodes.append(TextNode(section, TextType.TEXT))
                 else:  # even parts are the special nodes
-                    new_nodes.append(TextNode(part, text_type))
+                    new_nodes.append(TextNode(section, text_type))
 
     return new_nodes
 
