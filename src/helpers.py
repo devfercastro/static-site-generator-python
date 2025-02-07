@@ -1,5 +1,5 @@
 import re
-from typing import List, Tuple
+from typing import Callable, List, Literal, Tuple
 from textnode import TextNode, TextType
 from leafnode import LeafNode
 
@@ -102,6 +102,68 @@ def extract_markdown_links(text: str) -> List[Tuple[str, str]]:
     return re.findall(regex, text)
 
 
+def split_nodes(
+    old_nodes: List[TextNode],
+    extractor: Callable[[str], List[Tuple[str, str]]],
+    node_type: Literal[TextType.IMAGE, TextType.LINK],
+):
+    """
+    Generic function to split TextNode objects based on a delimiter extractor
+
+    Args:
+        old_nodes: List of TextNode to process
+        extractor: Function to extract the markdown elements (e.g, link or images)
+        node_type: Type of TextNode to create for the extracted elements
+
+    Returns:
+        List[TextNode]: New list of TextNode objects with the extracted elements split
+    """
+    new_nodes: List[TextNode] = []
+
+    for old_node in old_nodes:
+        if old_node.text_type != TextType.TEXT:
+            # non-text nodes are preserved
+            new_nodes.append(old_node)
+            continue
+
+        text = old_node.text
+        elements = extractor(old_node.text)
+
+        # if no elements are found, preserve the original
+        if len(elements) == 0:
+            new_nodes.append(old_node)
+            continue
+
+        # process each extracted element
+        for element in elements:
+            el_text, el_url = element
+
+            # the delimiter change depending if it's an image or a link
+            element_delimiter = (
+                f"![{el_text}]({el_url})"
+                if node_type == TextType.IMAGE
+                else f"[{el_text}]({el_url})"
+            )
+
+            # split the text using and capture the pre and post text
+            pre_element_text, post_element_text = text.split(element_delimiter)
+
+            # append the text before the element
+            if pre_element_text != "":
+                new_nodes.append(TextNode(pre_element_text, TextType.TEXT))
+            # append the element
+            new_nodes.append(TextNode(el_text, node_type, el_url))
+
+            # continue processing the text after the element
+            text = post_element_text
+
+        # append any remaining text after processing all elements
+        if text != "":
+            new_nodes.append(TextNode(text, TextType.TEXT))
+
+    return new_nodes
+
+
 def split_nodes_image(old_nodes: List[TextNode]):
     """
     Splits a list of TextNode containing markdown images into a list of TextNode where the images are separated
@@ -112,44 +174,7 @@ def split_nodes_image(old_nodes: List[TextNode]):
     Returns:
         List[TextNode]: New list of TextNode object with images split into individual nodes
     """
-    new_nodes: List[TextNode] = []
-
-    for node in old_nodes:
-        if node.text_type != TextType.TEXT:
-            new_nodes.append(node)
-        else:
-            text = node.text
-            inline_images = extract_markdown_images(text)
-
-            # if there are no images, skip
-            if len(inline_images) == 0:
-                new_nodes.append(node)
-                continue
-
-            for image in inline_images:
-                image_alt = image[0]
-                image_url = image[1]
-
-                # split just once the text using the current image as delimiter
-                # capture the text before and after the image
-                pre_image_text, post_image_text = text.split(
-                    f"![{image_alt}]({image_url})", 1
-                )
-
-                # if not empty string append the text before the image
-                if pre_image_text != "":
-                    new_nodes.append(TextNode(pre_image_text, TextType.TEXT))
-                # then append the image (to preserve the order)
-                new_nodes.append(TextNode(image_alt, TextType.IMAGE, image_url))
-
-                # continue with text after image
-                text = post_image_text
-
-            # append the remaining text
-            if text != "":
-                new_nodes.append(TextNode(text, TextType.TEXT))
-
-    return new_nodes
+    return split_nodes(old_nodes, extract_markdown_images, TextType.IMAGE)
 
 
 def split_nodes_link(old_nodes: List[TextNode]):
@@ -162,41 +187,4 @@ def split_nodes_link(old_nodes: List[TextNode]):
     Returns:
         List[TextNode]: New list of TextNode object with links split into individual nodes
     """
-    new_nodes: List[TextNode] = []
-
-    for node in old_nodes:
-        if node.text_type != TextType.TEXT:
-            new_nodes.append(node)
-        else:
-            text = node.text
-            inline_links = extract_markdown_links(text)
-
-            # if there are no links, skip
-            if len(inline_links) == 0:
-                new_nodes.append(node)
-                continue
-
-            for link in inline_links:
-                link_text = link[0]
-                link_url = link[1]
-
-                # split just once the text using the current link as delimiter
-                # capture the text before and after the link
-                pre_link_text, post_link_text = text.split(
-                    f"[{link_text}]({link_url})", 1
-                )
-
-                # if not empty string append before the link
-                if pre_link_text != "":
-                    new_nodes.append(TextNode(pre_link_text, TextType.TEXT))
-                # then append the link (to preserve the order)
-                new_nodes.append(TextNode(link_text, TextType.LINK, link_url))
-
-                # continue with text after link
-                text = post_link_text
-
-            # append the remaining text
-            if text != "":
-                new_nodes.append(TextNode(text, TextType.TEXT))
-
-    return new_nodes
+    return split_nodes(old_nodes, extract_markdown_links, TextType.LINK)
