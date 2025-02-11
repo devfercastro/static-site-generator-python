@@ -188,3 +188,17 @@ def split_nodes_link(old_nodes: List[TextNode]):
         List[TextNode]: New list of TextNode object with links split into individual nodes
     """
     return split_nodes(old_nodes, extract_markdown_links, TextType.LINK)
+
+
+def text_to_textnodes(text: str) -> List[TextNode]:
+    if text == "":
+        raise ValueError("cannot be empty")
+
+    nodes = [TextNode(text, TextType.TEXT)]
+    nodes = split_nodes_delimiter(nodes, "**", TextType.BOLD)
+    nodes = split_nodes_delimiter(nodes, "*", TextType.ITALIC)
+    nodes = split_nodes_delimiter(nodes, "`", TextType.CODE)
+    nodes = split_nodes_image(nodes)
+    nodes = split_nodes_link(nodes)
+
+    return nodes
