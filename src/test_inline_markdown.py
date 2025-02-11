@@ -1,7 +1,7 @@
 import re
 import unittest
 
-from helpers import (
+from inline_markdown import (
     split_nodes_delimiter,
     text_node_to_html_node,
     extract_markdown_images,
