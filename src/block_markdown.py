@@ -37,7 +37,7 @@ def block_to_block_type(block: str) -> BlockType:
     code_regex = r"^(```)\s+.+\s+(```)$"
     quote_regex = r"^(> ).+"
     unordered_list_regex = r"^(\* |- ).+"
-    ordered_list_regex = r"^([0-9]. ).+"
+    ordered_list_regex = r"^([0-9]\. ).+"
 
     if re.match(heading_regex, block):
         return BlockType.HEADING
