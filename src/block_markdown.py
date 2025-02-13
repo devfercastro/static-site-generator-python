@@ -3,6 +3,15 @@ import re
 from typing import List
 
 
+class BlockType(Enum):
+    HEADING = "heading"
+    CODE = "code"
+    QUOTE = "quote"
+    UNORDERED_LIST = "unordered_list"
+    ORDERED_LIST = "ordered_list"
+    PARAGRAPH = "paragraph"
+
+
 def markdown_to_blocks(markdown: str) -> List[str]:
     blocks = []
 
@@ -23,15 +32,6 @@ def markdown_to_blocks(markdown: str) -> List[str]:
     return blocks
 
 
-class BlockType(Enum):
-    HEADING = "heading"
-    CODE = "code"
-    QUOTE = "quote"
-    UNORDEREDLIST = "unordered_list"
-    ORDEREDLIST = "ordered_list"
-    PARAGRAPH = "paragraph"
-
-
 def block_to_block_type(block: str) -> BlockType:
     heading_regex = r"^(#{1,6} ).+"
     code_regex = r"^(```)\s+.+\s+(```)$"
@@ -46,8 +46,8 @@ def block_to_block_type(block: str) -> BlockType:
     if re.match(quote_regex, block):
         return BlockType.QUOTE
     if re.match(unordered_list_regex, block):
-        return BlockType.UNORDEREDLIST
+        return BlockType.UNORDERED_LIST
     if re.match(ordered_list_regex, block):
-        return BlockType.ORDEREDLIST
+        return BlockType.ORDERED_LIST
 
     return BlockType.PARAGRAPH

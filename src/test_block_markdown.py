@@ -63,9 +63,9 @@ class TestBlockToBlockType(unittest.TestCase):
             BlockType.HEADING,
             BlockType.CODE,
             BlockType.QUOTE,
-            BlockType.UNORDEREDLIST,
-            BlockType.UNORDEREDLIST,
-            BlockType.ORDEREDLIST,
+            BlockType.UNORDERED_LIST,
+            BlockType.UNORDERED_LIST,
+            BlockType.ORDERED_LIST,
             BlockType.PARAGRAPH,
         ]
         results = list(
@@ -93,13 +93,13 @@ class TestBlockToBlockType(unittest.TestCase):
 
     def test_block_to_block_type_unordered_list(self):
         block = "* This is an unordered list item"
-        expected = BlockType.UNORDEREDLIST
+        expected = BlockType.UNORDERED_LIST
         result = block_to_block_type(block)
         self.assertEqual(result, expected)
 
     def test_block_to_block_type_ordered_list(self):
         block = "1. This is an ordered list item"
-        expected = BlockType.ORDEREDLIST
+        expected = BlockType.ORDERED_LIST
         result = block_to_block_type(block)
         self.assertEqual(result, expected)
 
@@ -118,4 +118,3 @@ class TestBlockToBlockType(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-
