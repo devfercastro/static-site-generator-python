@@ -1,9 +1,9 @@
 import unittest
-from block_markdown import markdown_to_blocks
+from block_markdown import BlockType, block_to_block_type, markdown_to_blocks
 
 
 class TestMarkdownToBlocks(unittest.TestCase):
-    def test_markdown_to_blocks_base(self):
+    def test_markdown_to_blocks_multiple(self):
         markdown = """
             # This is a heading
 
@@ -20,4 +20,102 @@ class TestMarkdownToBlocks(unittest.TestCase):
         ]
         result = markdown_to_blocks(markdown)
         self.assertEqual(result, expected)
+
+    def test_markdown_to_blocks_empty_input(self):
+        markdown = ""
+        expected = []
+        result = markdown_to_blocks(markdown)
+        self.assertEqual(result, expected)
+
+    def test_markdown_to_blocks_single_paragraph(self):
+        markdown = "This is a single paragraph."
+        expected = ["This is a single paragraph."]
+        result = markdown_to_blocks(markdown)
+        self.assertEqual(result, expected)
+
+    def test_markdown_to_blocks_multiple_empty_lines(self):
+        markdown = "\n\n\n# Heading\n\n\nThis is a paragraph.\n\n\n"
+        expected = ["# Heading", "This is a paragraph."]
+        result = markdown_to_blocks(markdown)
+        self.assertEqual(result, expected)
+
+
+class TestBlockToBlockType(unittest.TestCase):
+    def test_block_to_block_type_multiple_blocks(self):
+        markdown = """
+        # heading
+
+        ```
+        print("hello world")
+        ```
+
+        > Quote
+
+        * unordered list item
+
+        - unordered list item option two
+
+        1. ordered list item
+
+        paragraph
+        """
+        expected = [
+            BlockType.HEADING,
+            BlockType.CODE,
+            BlockType.QUOTE,
+            BlockType.UNORDEREDLIST,
+            BlockType.UNORDEREDLIST,
+            BlockType.ORDEREDLIST,
+            BlockType.PARAGRAPH,
+        ]
+        results = list(
+            map(lambda block: block_to_block_type(block), markdown_to_blocks(markdown))
+        )
+        self.assertEqual(results, expected)
+
+    def test_block_to_block_type_heading(self):
+        block = "# This is a heading"
+        expected = BlockType.HEADING
+        result = block_to_block_type(block)
+        self.assertEqual(result, expected)
+
+    def test_block_to_block_type_code(self):
+        block = "```\nprint('Hello, World!')\n```"
+        expected = BlockType.CODE
+        result = block_to_block_type(block)
+        self.assertEqual(result, expected)
+
+    def test_block_to_block_type_quote(self):
+        block = "> This is a quote"
+        expected = BlockType.QUOTE
+        result = block_to_block_type(block)
+        self.assertEqual(result, expected)
+
+    def test_block_to_block_type_unordered_list(self):
+        block = "* This is an unordered list item"
+        expected = BlockType.UNORDEREDLIST
+        result = block_to_block_type(block)
+        self.assertEqual(result, expected)
+
+    def test_block_to_block_type_ordered_list(self):
+        block = "1. This is an ordered list item"
+        expected = BlockType.ORDEREDLIST
+        result = block_to_block_type(block)
+        self.assertEqual(result, expected)
+
+    def test_block_to_block_type_paragraph(self):
+        block = "This is a simple paragraph."
+        expected = BlockType.PARAGRAPH
+        result = block_to_block_type(block)
+        self.assertEqual(result, expected)
+
+    def test_block_to_block_type_empty_string(self):
+        block = ""
+        expected = BlockType.PARAGRAPH
+        result = block_to_block_type(block)
+        self.assertEqual(result, expected)
+
+
+if __name__ == "__main__":
+    unittest.main()
 
