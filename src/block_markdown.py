@@ -13,6 +13,15 @@ class BlockType(Enum):
 
 
 def markdown_to_blocks(markdown: str) -> List[str]:
+    """
+    Converts a markdown string into a list of blocks
+
+    Args:
+        markdown: A string containing markdown text
+
+    Returns:
+        List[str]: A list of string, where each string is a block of markdown. Blocks are seperated by a blank line
+    """
     blocks = []
 
     for block in markdown.split("\n\n"):
@@ -33,11 +42,25 @@ def markdown_to_blocks(markdown: str) -> List[str]:
 
 
 def block_to_block_type(block: str) -> BlockType:
+    """
+    Determine the type of a markdown block
+
+    Args:
+        block: A string representing a single block of markdown
+
+    Returns:
+        BlockType: An enumerated value representing the type of the block
+    """
+    # a heading block must start with one to six "#" followed by a space, followed by anything
     heading_regex = r"^(#{1,6} ).+"
+    # a code block must start with "```" followed by a blank character, followed by anything, followed by another blank character and ending with "```"
     code_regex = r"^(```)\s+.+\s+(```)$"
+    # a quote block must start with ">" followed by a space, followed by anything
     quote_regex = r"^(> ).+"
+    # an unordered list block must start with "*" or "-" followed by a space and followed by anything
     unordered_list_regex = r"^(\* |- ).+"
-    ordered_list_regex = r"^([0-9]\. ).+"
+    # an ordered list block must start with a number followed by a ".", followed by a space and followed by anything
+    ordered_list_regex = r"^([0-9]+\. ).+"
 
     if re.match(heading_regex, block):
         return BlockType.HEADING
