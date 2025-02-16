@@ -16,10 +16,6 @@ class HTMLNode:
             children: A list of HTMLNode objects representing the children of this node
             props: A dictionary of key-value pairs representing the attributes of the HTML tag. For example, a link (<a> tag) might have {"href": "https://www.google.com"}
         """
-        # TODO: if no tag render raw text
-        # TODO: if no value assume it has children
-        # TODO: if no children assume it just has value
-        # TODO: if no props assume it has no attributes
         self.tag = tag
         self.value = value
         self.children = children
