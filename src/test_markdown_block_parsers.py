@@ -1,7 +1,7 @@
 import unittest
 from textwrap import dedent
 
-from markdown_block_parsers import parse_code, parse_heading
+from markdown_block_parsers import parse_code, parse_heading, parse_quote
 from htmlnode import HTMLNode
 
 
@@ -33,3 +33,12 @@ class TestParseCode(unittest.TestCase):
         with self.assertRaises(ValueError) as context:
             parse_code("not valid code block")
         self.assertEqual(str(context.exception), "invalid markdown code block syntax")
+
+
+class TestParseQuote(unittest.TestCase):
+    def test_parse_quote_base(self):
+        quote = "> this is a quote"
+        quote_content = "this is a quote"
+        expected = HTMLNode("blockquote", quote_content)
+        result = parse_quote(quote)
+        self.assertEqual(result, expected)

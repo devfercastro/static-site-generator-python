@@ -23,13 +23,12 @@ def parse_heading(block: str) -> HTMLNode:
     raise ValueError("invalid markdown header syntax")
 
 
-# TODO: CODE
 def parse_code(block: str) -> HTMLNode:
     """
     Parse a markdown code block and convert it into an HTMLNode object
 
     Args:
-        block: A string representing a markdown heading
+        block: A string representing a markdown code block
 
     Returns:
         HTMLNode: An HTMLNode object representing a html "code" tag nested inside a "pre" tag
@@ -47,7 +46,25 @@ def parse_code(block: str) -> HTMLNode:
     raise ValueError("invalid markdown code block syntax")
 
 
-# TODO: QUOTE
+def parse_quote(block: str) -> HTMLNode:
+    """
+    Parse a markdown quote and converts it into an HTMLNode object
+
+    Args:
+        block: A string representing a markdown quote
+
+    Returns:
+        HTMLNode: An HTMLNode object representing a html "blockquote" tag
+
+    Raises:
+        ValueError: If the markdown quote is invalid
+    """
+    block_content = re.match(r"^> (.+)", block)
+    if block_content:
+        return HTMLNode("blockquote", block_content.group(1))
+    raise ValueError("invalid markdown quote syntax")
+
+
 # TODO: UNORDERED_LIST
 # TODO: ORDERED_LIST
 # TODO: PARAGRAPH
