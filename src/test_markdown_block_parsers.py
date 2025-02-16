@@ -28,3 +28,8 @@ class TestParseCode(unittest.TestCase):
         expected = HTMLNode("pre", None, [HTMLNode("code", code_content)])
         result = parse_code(code_block)
         self.assertEqual(result, expected)
+
+    def test_parse_code_invalid(self):
+        with self.assertRaises(ValueError) as context:
+            parse_code("not valid code block")
+        self.assertEqual(str(context.exception), "invalid markdown code block syntax")
