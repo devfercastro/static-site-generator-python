@@ -2,6 +2,8 @@ from enum import Enum
 import re
 from typing import List
 
+from markdown_block_parsers import parse_code, parse_heading
+
 
 class BlockType(Enum):
     HEADING = "heading"
@@ -74,3 +76,19 @@ def block_to_block_type(block: str) -> BlockType:
         return BlockType.ORDERED_LIST
 
     return BlockType.PARAGRAPH
+
+
+def markdown_to_html_node(markdown: str):
+    markdown_blocks = markdown_to_blocks(markdown)
+    html_nodes = []
+
+    for block in markdown_blocks:
+        typed_block = block_to_block_type(block)
+        match typed_block:
+            case BlockType.HEADING:
+                html_nodes.append(parse_heading(block))
+    # TODO: CODE
+    # TODO: QUOTE
+    # TODO: UNORDERED_LIST
+    # TODO: ORDERED_LIST
+    # TODO: PARAGRAPH
