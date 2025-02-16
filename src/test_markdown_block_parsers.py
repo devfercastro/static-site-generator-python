@@ -1,4 +1,5 @@
 import unittest
+from textwrap import dedent
 
 from markdown_block_parsers import parse_code, parse_heading
 from htmlnode import HTMLNode
@@ -23,8 +24,7 @@ class TestParseHeading(unittest.TestCase):
 class TestParseCode(unittest.TestCase):
     def test_parse_code_base(self):
         code_block = "```\nfor i in range(0, 10):\n    print(i)```"
-        expected = HTMLNode(
-            "pre", None, [HTMLNode("code", code_block.strip("```\n\t"))]
-        )
+        code_content = code_block.strip("```\n")
+        expected = HTMLNode("pre", None, [HTMLNode("code", code_content)])
         result = parse_code(code_block)
         self.assertEqual(result, expected)
