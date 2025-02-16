@@ -2,7 +2,12 @@ from enum import Enum
 import re
 from typing import List
 
-from markdown_block_parsers import parse_code, parse_heading, parse_quote
+from markdown_block_parsers import (
+    parse_code,
+    parse_heading,
+    parse_quote,
+    parse_unordered_list,
+)
 
 
 class BlockType(Enum):
@@ -91,6 +96,7 @@ def markdown_to_html_node(markdown: str):
                 html_nodes.append(parse_heading(block))
             case BlockType.QUOTE:
                 html_nodes.append(parse_quote(block))
-            # TODO: UNORDERED_LIST
+            case BlockType.UNORDERED_LIST:
+                html_nodes.append(parse_unordered_list(block))
             # TODO: ORDERED_LIST
             # TODO: PARAGRAPH

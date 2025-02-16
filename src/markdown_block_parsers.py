@@ -65,6 +65,37 @@ def parse_quote(block: str) -> HTMLNode:
     raise ValueError("invalid markdown quote syntax")
 
 
-# TODO: UNORDERED_LIST
+def parse_unordered_list(block: str) -> HTMLNode:
+    """
+    Parse a markdown unordered list and converts it into an HTMLNode object
+
+    Args:
+        block: A string representing a markdown quote
+
+    Returns:
+        HTMLNode: An HTMLNode object representing several "li" tags nested inside a "ul" tag
+    Raises:
+        ValueError: If the markdown unordered list is invalid
+    """
+    pattern = re.compile(
+        r"""
+    ^
+    [-\*]  # start with dash or asterisk
+    \      # followed by a space (backslash escapes exactly one space)
+    (.+)   # capture all the following characters
+    $
+    """,
+        re.VERBOSE | re.MULTILINE,
+    )
+    unordered_list = pattern.findall(block)
+    if unordered_list:
+        unordered_list_items = [
+            HTMLNode("li", list_item) for list_item in unordered_list
+        ]
+        unordered_list_container = HTMLNode("ul", None, unordered_list_items)
+        return unordered_list_container
+    raise ValueError("invalid markdown unordered list syntax")
+
+
 # TODO: ORDERED_LIST
 # TODO: PARAGRAPH

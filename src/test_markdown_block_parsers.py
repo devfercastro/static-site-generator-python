@@ -1,7 +1,13 @@
 import unittest
-from textwrap import dedent
+from functools import reduce
+import random
 
-from markdown_block_parsers import parse_code, parse_heading, parse_quote
+from markdown_block_parsers import (
+    parse_code,
+    parse_heading,
+    parse_quote,
+    parse_unordered_list,
+)
 from htmlnode import HTMLNode
 
 
@@ -41,4 +47,20 @@ class TestParseQuote(unittest.TestCase):
         quote_content = "this is a quote"
         expected = HTMLNode("blockquote", quote_content)
         result = parse_quote(quote)
+        self.assertEqual(result, expected)
+
+
+class TestParseUnorderedList(unittest.TestCase):
+    def test_parse_unordered_list_asterisks(self):
+        list_items = [f"Item {i}" for i in range(1, 11)]
+
+        unordered_list = reduce(
+            lambda acc, list_item: acc + f"{random.choice(["-","*"])} {list_item}\n",
+            list_items,
+            "",
+        )
+        expected = HTMLNode(
+            "ul", None, [HTMLNode("li", list_item) for list_item in list_items]
+        )
+        result = parse_unordered_list(unordered_list)
         self.assertEqual(result, expected)
