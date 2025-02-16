@@ -87,7 +87,8 @@ def markdown_to_html_node(markdown: str):
         match typed_block:
             case BlockType.HEADING:
                 html_nodes.append(parse_heading(block))
-    # TODO: CODE
+            case BlockType.CODE:
+                html_nodes.append(parse_heading(block))
     # TODO: QUOTE
     # TODO: UNORDERED_LIST
     # TODO: ORDERED_LIST
