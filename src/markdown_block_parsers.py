@@ -128,4 +128,14 @@ def parse_ordered_list(block: str) -> HTMLNode:
     raise ValueError("invalid markdown ordered list syntax")
 
 
-# TODO: PARAGRAPH
+def parse_paragraph(block: str) -> HTMLNode:
+    """
+    Parse a markdown paragraph and converts it into an HTMLNode object
+
+    Args:
+        block: A string representing a markdown ordered list
+
+    Returns:
+        HTMLNode: An HTMLNode object representing a "p" tag
+    """
+    return HTMLNode("p", block)

@@ -8,6 +8,7 @@ from markdown_block_parsers import (
     parse_quote,
     parse_unordered_list,
     parse_ordered_list,
+    parse_paragraph,
 )
 from htmlnode import HTMLNode
 
@@ -79,4 +80,12 @@ class TestParseOrderedList(unittest.TestCase):
             "ol", None, [HTMLNode("li", list_item) for list_item in list_items]
         )
         result = parse_ordered_list(ordered_list)
+        self.assertEqual(result, expected)
+
+
+class TestParseParagraph(unittest.TestCase):
+    def test_parse_paragraph(self):
+        paragraph = "this is some text"
+        expected = HTMLNode("p", paragraph)
+        result = parse_paragraph(paragraph)
         self.assertEqual(result, expected)

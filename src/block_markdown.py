@@ -5,6 +5,7 @@ from typing import List
 from markdown_block_parsers import (
     parse_code,
     parse_heading,
+    parse_paragraph,
     parse_quote,
     parse_unordered_list,
     parse_ordered_list,
@@ -102,4 +103,5 @@ def markdown_to_html_node(markdown: str):
                 html_nodes.append(parse_unordered_list(block))
             case BlockType.ORDERED_LIST:
                 html_nodes.append(parse_ordered_list(block))
-            # TODO: PARAGRAPH
+            case BlockType.PARAGRAPH:
+                html_nodes.append(parse_paragraph(block))
