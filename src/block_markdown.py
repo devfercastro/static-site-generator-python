@@ -7,6 +7,7 @@ from markdown_block_parsers import (
     parse_heading,
     parse_quote,
     parse_unordered_list,
+    parse_ordered_list,
 )
 
 
@@ -84,6 +85,7 @@ def block_to_block_type(block: str) -> BlockType:
 
 
 def markdown_to_html_node(markdown: str):
+    # TODO: test general functionality of this function
     markdown_blocks = markdown_to_blocks(markdown)
     html_nodes = []
 
@@ -98,5 +100,6 @@ def markdown_to_html_node(markdown: str):
                 html_nodes.append(parse_quote(block))
             case BlockType.UNORDERED_LIST:
                 html_nodes.append(parse_unordered_list(block))
-            # TODO: ORDERED_LIST
+            case BlockType.ORDERED_LIST:
+                html_nodes.append(parse_ordered_list(block))
             # TODO: PARAGRAPH

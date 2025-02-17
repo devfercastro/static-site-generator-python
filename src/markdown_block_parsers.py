@@ -70,7 +70,7 @@ def parse_unordered_list(block: str) -> HTMLNode:
     Parse a markdown unordered list and converts it into an HTMLNode object
 
     Args:
-        block: A string representing a markdown quote
+        block: A string representing a markdown unordered list
 
     Returns:
         HTMLNode: An HTMLNode object representing several "li" tags nested inside a "ul" tag
@@ -97,5 +97,35 @@ def parse_unordered_list(block: str) -> HTMLNode:
     raise ValueError("invalid markdown unordered list syntax")
 
 
-# TODO: ORDERED_LIST
+def parse_ordered_list(block: str) -> HTMLNode:
+    """
+    Parse a markdown ordered list and converts it into an HTMLNode object
+
+    Args:
+        block: A string representing a markdown ordered list
+
+    Returns:
+        HTMLNode: An HTMLNode object representing several "li" tags nested inside a "ol" tag
+    Raises:
+        ValueError: If the markdown ordered list is invalid
+    """
+    pattern = re.compile(
+        r"""
+    ^
+    \d+    # start with a number
+    \.     # followed by a dot
+    \      # followed by a space (backslash escapes exactly one space)
+    (.+)   # capture all the following characters
+    $
+    """,
+        re.VERBOSE | re.MULTILINE,
+    )
+    ordered_list = pattern.findall(block)
+    if ordered_list:
+        ordered_list_items = [HTMLNode("li", list_item) for list_item in ordered_list]
+        ordered_list_container = HTMLNode("ol", None, ordered_list_items)
+        return ordered_list_container
+    raise ValueError("invalid markdown ordered list syntax")
+
+
 # TODO: PARAGRAPH

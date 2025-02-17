@@ -7,6 +7,7 @@ from markdown_block_parsers import (
     parse_heading,
     parse_quote,
     parse_unordered_list,
+    parse_ordered_list,
 )
 from htmlnode import HTMLNode
 
@@ -51,7 +52,7 @@ class TestParseQuote(unittest.TestCase):
 
 
 class TestParseUnorderedList(unittest.TestCase):
-    def test_parse_unordered_list_asterisks(self):
+    def test_parse_unordered_list_base(self):
         list_items = [f"Item {i}" for i in range(1, 11)]
 
         unordered_list = reduce(
@@ -63,4 +64,19 @@ class TestParseUnorderedList(unittest.TestCase):
             "ul", None, [HTMLNode("li", list_item) for list_item in list_items]
         )
         result = parse_unordered_list(unordered_list)
+        self.assertEqual(result, expected)
+
+
+class TestParseOrderedList(unittest.TestCase):
+    def test_parse_ordered_list(self):
+        list_items = [f"Item {i}" for i in range(1, 11)]
+        ordered_list = reduce(
+            lambda acc, list_item: acc + f"{list_item[0] + 1}. {list_item[1]}\n",
+            enumerate(list_items),
+            "",
+        )
+        expected = HTMLNode(
+            "ol", None, [HTMLNode("li", list_item) for list_item in list_items]
+        )
+        result = parse_ordered_list(ordered_list)
         self.assertEqual(result, expected)
