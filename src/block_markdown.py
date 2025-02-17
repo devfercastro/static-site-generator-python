@@ -86,7 +86,6 @@ def block_to_block_type(block: str) -> BlockType:
 
 
 def markdown_to_html_node(markdown: str):
-    # TODO: test general functionality of this function
     markdown_blocks = markdown_to_blocks(markdown)
     html_nodes = []
 
@@ -105,3 +104,4 @@ def markdown_to_html_node(markdown: str):
                 html_nodes.append(parse_ordered_list(block))
             case BlockType.PARAGRAPH:
                 html_nodes.append(parse_paragraph(block))
+    return html_nodes

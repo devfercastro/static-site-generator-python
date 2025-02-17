@@ -1,5 +1,11 @@
 import unittest
-from block_markdown import BlockType, block_to_block_type, markdown_to_blocks
+from block_markdown import (
+    BlockType,
+    block_to_block_type,
+    markdown_to_blocks,
+    markdown_to_html_node,
+)
+from htmlnode import HTMLNode
 
 
 class TestMarkdownToBlocks(unittest.TestCase):
@@ -42,6 +48,7 @@ class TestMarkdownToBlocks(unittest.TestCase):
 
 class TestBlockToBlockType(unittest.TestCase):
     def test_block_to_block_type_multiple_blocks(self):
+        # TODO: check this fucking multiline string
         markdown = """
         # heading
 
@@ -113,6 +120,27 @@ class TestBlockToBlockType(unittest.TestCase):
         block = ""
         expected = BlockType.PARAGRAPH
         result = block_to_block_type(block)
+        self.assertEqual(result, expected)
+
+
+class TestMarkdownToHtmlNodes(unittest.TestCase):
+    def test_markdown_to_html_nodes(self):
+        h1 = "# heading"
+        code = '```\nprint("hello world")\n```'
+        quote = "> Quote"
+        unordered_list = "* unordered list item"
+        ordered_list = "1. ordered list item"
+        paragraph = "some text that represents a paragraph"
+        markdown = f"{h1}\n\n{code}\n\n{quote}\n\n{unordered_list}\n\n{ordered_list}\n\n{paragraph}"
+        expected = [
+            HTMLNode("h1", h1.strip("# ")),
+            HTMLNode("pre", None, [HTMLNode("code", code.strip("```\n"))]),
+            HTMLNode("blockquote", quote.strip("> ")),
+            HTMLNode("ul", None, [HTMLNode("li", unordered_list.strip("* "))]),
+            HTMLNode("ol", None, [HTMLNode("li", ordered_list.strip("1. "))]),
+            HTMLNode("p", paragraph),
+        ]
+        result = markdown_to_html_node(markdown)
         self.assertEqual(result, expected)
 
 
