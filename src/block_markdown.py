@@ -93,7 +93,7 @@ def markdown_to_html_node(markdown: str):
             case BlockType.HEADING:
                 html_nodes.append(parse_heading(block))
             case BlockType.CODE:
-                html_nodes.append(parse_heading(block))
+                html_nodes.append(parse_code(block))
             case BlockType.QUOTE:
                 html_nodes.append(parse_quote(block))
             case BlockType.UNORDERED_LIST:
