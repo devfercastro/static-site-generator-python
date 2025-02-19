@@ -1,3 +1,4 @@
+from helpers import copy_content
 from textnode import TextNode, TextType
 
 
@@ -8,3 +9,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+    copy_content("static", "public")
