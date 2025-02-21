@@ -38,7 +38,7 @@ def sync_directories(source: Path, destination: Path):
 
         """
         # create destination subdirectory
-        Path.mkdir(copy_destination)
+        Path.mkdir(copy_destination, exist_ok=True)
 
         for item in os.listdir(current_path):
             item_path = current_path / item

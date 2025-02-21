@@ -2,8 +2,8 @@
 
 from pathlib import Path
 
-from .core import TextNode, TextType
-from .utils import sync_directories
+from core import TextNode, TextType
+from utils import sync_directories
 
 
 def main():
