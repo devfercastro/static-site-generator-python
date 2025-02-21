@@ -1,6 +1,7 @@
 from typing import List
 from src.core import TextNode
 from src.core import TextType
+from .elements import split_nodes_image, split_nodes_link
 
 
 def split_nodes_delimiter(
