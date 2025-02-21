@@ -19,8 +19,9 @@ def main():
 if __name__ == "__main__":
     main()
 
-    # make sure "public" folder exist
     destination = Path("public")
+    # Ensure the "public" directory exists.
+    # Create the directory along with any necessary parent directories.
     destination.mkdir(parents=True, exist_ok=True)
 
     sync_directories(Path("static"), destination)
