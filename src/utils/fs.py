@@ -1,10 +1,12 @@
+"""Just some file system function."""
+
 import os
 import shutil
+from pathlib import Path
 
 
-def sync_directories(source: str, destination: str):
-    """
-    Syncronizes the contents of source directory to destination directory
+def sync_directories(source: Path, destination: Path):
+    """Syncronizes the contents of source directory to destination directory.
 
     Args:
         source: Path to the source directory to copy from
@@ -12,37 +14,42 @@ def sync_directories(source: str, destination: str):
 
     Raises:
         ValueError: If source or destination paths are invalid
+
     """
-    if not os.path.exists(source):
-        raise ValueError("`source` must be a valid path")
-    if not os.path.exists(destination):
-        raise ValueError("`destination` must be a valid path")
+
+    def error_message(item):
+        return f"{item} must be a valid path"
+
+    if not source.exists():
+        raise ValueError(error_message("source"))
+    if not destination.exists():
+        raise ValueError(error_message("destination"))
 
     # clean the destination
     shutil.rmtree(destination)
-    os.mkdir(destination)
+    Path.mkdir(destination)
 
-    def _copy_recursive(current_path: str, copy_destination: str):
-        """
-        Recursively copies directory contents while preserving structure
+    def _copy_recursive(current_path: Path, copy_destination: Path):
+        """Recursively copies directory contents while preserving structure.
 
         Args:
             current_path: Current directory path beign processed
             copy_destination: Target path for current directory
+
         """
         # create destination subdirectory
-        os.mkdir(copy_destination)
+        Path.mkdir(copy_destination)
 
         for item in os.listdir(current_path):
-            item_path = os.path.join(current_path, item)
+            item_path = current_path / item
 
             # if file, just copy
-            if os.path.isfile(item_path):
+            if item_path.is_file():
                 shutil.copy(item_path, copy_destination)
 
             # if directory, update destination and recursively call the function
             else:
-                new_destination = os.path.join(copy_destination, item)
+                new_destination = copy_destination / item
                 _copy_recursive(item_path, new_destination)
 
     _copy_recursive(source, destination)
