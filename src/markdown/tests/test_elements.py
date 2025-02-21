@@ -1,19 +1,19 @@
-import unittest
 import random
 import re
+import unittest
 from functools import reduce
 
-from src.core import TextNode, TextType, HTMLNode
+from src.core import HTMLNode, TextNode, TextType
 from src.markdown.elements import (
-    parse_heading,
     parse_code,
-    parse_quote,
-    parse_unordered_list,
+    parse_heading,
     parse_ordered_list,
     parse_paragraph,
+    parse_quote,
+    parse_unordered_list,
+    split_nodes_image,
+    split_nodes_link,
 )
-from src.markdown.elements import extract_markdown_images, extract_markdown_links
-from src.markdown.elements import split_nodes_link, split_nodes_image
 from src.markdown.inline_parser import split_nodes_delimiter
 
 
@@ -164,44 +164,6 @@ class TestSplitNodesDelimiter(unittest.TestCase):
             TextNode("world", TextType.TEXT),
         ]
         result = split_nodes_delimiter([node], "`", TextType.CODE)
-        self.assertEqual(result, expected)
-
-
-class TestExtractMarkdownImages(unittest.TestCase):
-    def test_extract_markdown_images_unique_image(self):
-        text = "This is text with a ![rick roll](https://i.imgur.com/aKaOqIh.gif)"
-        expected = [
-            ("rick roll", "https://i.imgur.com/aKaOqIh.gif"),
-        ]
-        result = extract_markdown_images(text)
-        self.assertEqual(result, expected)
-
-    def test_extract_markdown_images_multiple_images(self):
-        text = "This is text with a ![rick roll](https://i.imgur.com/aKaOqIh.gif) and ![obi wan](https://i.imgur.com/fJRm4Vk.jpeg)"
-        expected = [
-            ("rick roll", "https://i.imgur.com/aKaOqIh.gif"),
-            ("obi wan", "https://i.imgur.com/fJRm4Vk.jpeg"),
-        ]
-        result = extract_markdown_images(text)
-        self.assertEqual(result, expected)
-
-
-class TestExtractMarkdownLinks(unittest.TestCase):
-    def test_extract_markdown_links_unique(self):
-        text = "This is text with a link [to boot dev](https://www.boot.dev)"
-        expected = [
-            ("to boot dev", "https://www.boot.dev"),
-        ]
-        result = extract_markdown_links(text)
-        self.assertEqual(result, expected)
-
-    def test_extract_markdown_links_multiple(self):
-        text = "This is text with a link [to boot dev](https://www.boot.dev) and [to youtube](https://www.youtube.com/@bootdotdev)"
-        expected = [
-            ("to boot dev", "https://www.boot.dev"),
-            ("to youtube", "https://www.youtube.com/@bootdotdev"),
-        ]
-        result = extract_markdown_links(text)
         self.assertEqual(result, expected)
 
 

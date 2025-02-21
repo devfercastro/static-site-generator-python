@@ -1,11 +1,8 @@
 import re
-from src.core import HTMLNode
-from typing import List
-from src.core import TextNode
-from typing import Tuple
-from src.core import TextType
-from typing import Callable
-from typing import Literal
+from typing import Callable, List, Literal, Tuple
+
+from src.core import HTMLNode, TextNode, TextType
+from .extractor import extract_markdown_links, extract_markdown_images
 
 
 def parse_heading(block: str) -> HTMLNode:
@@ -145,34 +142,6 @@ def parse_paragraph(block: str) -> HTMLNode:
         HTMLNode: An HTMLNode object representing a "p" tag
     """
     return HTMLNode("p", block)
-
-
-def extract_markdown_images(text: str) -> List[Tuple[str, str]]:
-    """
-    Extracts the image alt text and url from inline markdown
-
-    Args:
-        text: Raw markdown text that contains the image or images
-
-    Returns:
-        List[Tuple[str, str]]: The list of tuples each one being (image alt text, image url)
-    """
-    regex = r"!\[(.*?)\]\((.*?)\)"
-    return re.findall(regex, text)
-
-
-def extract_markdown_links(text: str) -> List[Tuple[str, str]]:
-    """
-    Extracts the link text and url from inline markdown
-
-    Args:
-        text: Raw markdown text that contains the link or links
-
-    Returns:
-        List[Tuple[str, str]]: The list of tuples each one beign (link text, link url)
-    """
-    regex = r"\[(.*?)\]\((.*?)\)"
-    return re.findall(regex, text)
 
 
 def split_nodes(
