@@ -71,8 +71,7 @@ class TestBlockToBlockType(unittest.TestCase):
             BlockType.PARAGRAPH,
         ]
         results = list(
-            map(lambda block: block_to_block_type(
-                block), markdown_to_blocks(markdown))
+            map(lambda block: block_to_block_type(block), markdown_to_blocks(markdown))
         )
         self.assertEqual(results, expected)
 

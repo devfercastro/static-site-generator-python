@@ -22,8 +22,7 @@ def markdown_to_blocks(markdown: str) -> List[str]:
             # handle blocks with multiple indentated lines
             if "\n" in stripped_block:
                 # remove indentation from each line
-                outdented_lines = [line.strip()
-                                   for line in stripped_block.split("\n")]
+                outdented_lines = [line.strip() for line in stripped_block.split("\n")]
                 blocks.append("\n".join(outdented_lines))
 
             else:
