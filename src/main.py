@@ -1,6 +1,6 @@
 import os
-from helpers import copy_content
-from textnode import TextNode, TextType
+from core import TextNode, TextType
+from utils import sync_directories
 
 
 def main():
@@ -15,4 +15,4 @@ if __name__ == "__main__":
     destination = "public"
     os.makedirs(os.path.join(os.path.dirname("src"), destination), exist_ok=True)
 
-    copy_content("static", destination)
+    sync_directories("static", destination)
