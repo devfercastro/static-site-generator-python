@@ -28,3 +28,20 @@ def extract_markdown_links(text: str) -> List[Tuple[str, str]]:
     """
     regex = r"\[(.*?)\]\((.*?)\)"
     return re.findall(regex, text)
+
+
+def extract_title(markdown: str):
+    """Extracts the h1 header from raw markdown.
+
+    Args:
+        markdown: The markdown code to be processed
+
+    Raises:
+        ValueError: If the h1 header is not encountered
+
+    """
+    h1_pattern = r"^# (.+)$"
+    h1 = re.match(h1_pattern, markdown, re.MULTILINE)
+    if h1:
+        return h1.group(1)
+    raise ValueError("H1 header not encountered in markdown passed")

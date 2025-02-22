@@ -1,6 +1,10 @@
 import unittest
 
-from src.markdown.extractor import extract_markdown_images, extract_markdown_links
+from src.markdown.extractor import (
+    extract_markdown_images,
+    extract_markdown_links,
+    extract_title,
+)
 
 
 class TestExtractMarkdownImages(unittest.TestCase):
@@ -39,3 +43,19 @@ class TestExtractMarkdownLinks(unittest.TestCase):
         ]
         result = extract_markdown_links(text)
         self.assertEqual(result, expected)
+
+
+class TestExtractTitle(unittest.TestCase):
+    def test_extract_title_base(self):
+        h1 = "This is the header that I'm looking for"
+        markdown = f"# {h1}\n\na paragraph\n\nanother paragraph"
+        expected = h1
+        result = extract_title(markdown)
+        self.assertEqual(result, expected)
+
+    def test_extract_title_invalid(self):
+        with self.assertRaises(ValueError) as context:
+            extract_title("markdown with no header")
+        self.assertEqual(
+            str(context.exception), "H1 header not encountered in markdown passed"
+        )
