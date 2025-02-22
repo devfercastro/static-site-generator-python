@@ -1,16 +1,20 @@
+from typing import List
+
+from core.htmlnode import HTMLNode
 from src.core import BlockType
-from .block_parser import markdown_to_blocks, block_to_block_type
+
+from .block_parser import block_to_block_type, markdown_to_blocks
 from .elements import (
-    parse_heading,
     parse_code,
-    parse_quote,
-    parse_unordered_list,
+    parse_heading,
     parse_ordered_list,
     parse_paragraph,
+    parse_quote,
+    parse_unordered_list,
 )
 
 
-def markdown_to_html_node(markdown: str):
+def markdown_to_html_node(markdown: str) -> List[HTMLNode]:
     markdown_blocks = markdown_to_blocks(markdown)
     html_nodes = []
 

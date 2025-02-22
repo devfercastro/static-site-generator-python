@@ -14,6 +14,7 @@ from .elements import (
     split_nodes_image,
     split_nodes,
 )
+from .parser import markdown_to_html_node
 
 __all__ = [
     "block_to_block_type",
@@ -29,4 +30,5 @@ __all__ = [
     "split_nodes",
     "split_nodes_link",
     "split_nodes_image",
+    "markdown_to_html_node",
 ]
