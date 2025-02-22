@@ -3,7 +3,7 @@
 from pathlib import Path
 
 from core import TextNode, TextType
-from utils import sync_directories
+from utils import sync_directories, generate_page
 
 
 def main():
@@ -13,7 +13,7 @@ def main():
     the contents of the 'static' directory to the 'public' directory.
     """
     dummy_obj = TextNode("fañsdkljfa", TextType.BOLD, "https://nose")
-    print(dummy_obj)  # noqa: T201
+    print(dummy_obj)
 
 
 if __name__ == "__main__":
@@ -25,3 +25,9 @@ if __name__ == "__main__":
     destination.mkdir(parents=True, exist_ok=True)
 
     sync_directories(Path("static"), destination)
+
+    markdown = Path("content/index.md")
+    template = Path("template.html")
+    output = Path("index.html")
+
+    generate_page(markdown, template, output)
