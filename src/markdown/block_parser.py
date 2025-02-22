@@ -1,6 +1,6 @@
 from typing import List
 import re
-from src.core import BlockType
+from core import BlockType
 
 
 def markdown_to_blocks(markdown: str) -> List[str]:

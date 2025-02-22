@@ -1,7 +1,7 @@
 from typing import List
 
 from core.htmlnode import HTMLNode
-from src.core import BlockType
+from core import BlockType
 
 from .block_parser import block_to_block_type, markdown_to_blocks
 from .elements import (

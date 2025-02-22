@@ -1,7 +1,7 @@
 import re
 from typing import Callable, List, Literal, Tuple
 
-from src.core import HTMLNode, TextNode, TextType
+from core import HTMLNode, TextNode, TextType
 from .extractor import extract_markdown_links, extract_markdown_images
 
 
