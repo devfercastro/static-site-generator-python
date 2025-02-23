@@ -1,6 +1,7 @@
 import unittest
+
+from src.core import LeafNode, ParentNode
 from src.markdown.parser import markdown_to_html_node
-from src.core import HTMLNode
 
 
 class TestMarkdownToHtmlNodes(unittest.TestCase):
@@ -25,12 +26,12 @@ class TestMarkdownToHtmlNodes(unittest.TestCase):
         {paragraph}
         """
         expected = [
-            HTMLNode("h1", h1.strip("# ")),
-            HTMLNode("pre", None, [HTMLNode("code", code.strip("```\n"))]),
-            HTMLNode("blockquote", quote.strip("> ")),
-            HTMLNode("ul", None, [HTMLNode("li", unordered_list.strip("* "))]),
-            HTMLNode("ol", None, [HTMLNode("li", ordered_list.strip("1. "))]),
-            HTMLNode("p", paragraph),
+            ParentNode("h1", h1.strip("# ")),
+            ParentNode("pre", None, [LeafNode("code", code.strip("```\n"))]),
+            ParentNode("blockquote", quote.strip("> ")),
+            ParentNode("ul", None, [LeafNode("li", unordered_list.strip("* "))]),
+            ParentNode("ol", None, [LeafNode("li", ordered_list.strip("1. "))]),
+            ParentNode("p", paragraph),
         ]
         result = markdown_to_html_node(markdown)
         self.assertEqual(result, expected)
