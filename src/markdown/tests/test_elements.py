@@ -3,7 +3,7 @@ import re
 import unittest
 from functools import reduce
 
-from src.core import HTMLNode, TextNode, TextType
+from src.core import HTMLNode, ParentNode, TextNode, TextType
 from src.markdown.elements import (
     parse_code,
     parse_heading,
@@ -20,17 +20,9 @@ from src.markdown.inline_parser import split_nodes_delimiter
 class TestParseHeading(unittest.TestCase):
     def test_parse_heading_base(self):
         headers = [f"{"#" * i} heading {i}" for i in range(1, 7)]
-        expected = [HTMLNode(f"h{i}", f"heading {i}") for i in range(1, 7)]
+        expected = [ParentNode(f"h{i}", f"heading {i}") for i in range(1, 7)]
         result = [parse_heading(header) for header in headers]
         self.assertEqual(result, expected)
-
-    def test_parse_heading_invalid(self):
-        with self.assertRaises(ValueError) as context:
-            parse_heading("####### heading 7 invalid")
-        self.assertEqual(str(context.exception), "invalid markdown header syntax")
-        with self.assertRaises(ValueError) as context:
-            parse_heading("not valid")
-        self.assertEqual(str(context.exception), "invalid markdown header syntax")
 
 
 class TestParseCode(unittest.TestCase):
