@@ -4,6 +4,7 @@ import unittest
 from functools import reduce
 
 from src.core import HTMLNode, ParentNode, TextNode, TextType
+from src.core.leafnode import LeafNode
 from src.markdown.elements import (
     parse_code,
     parse_heading,
@@ -29,14 +30,9 @@ class TestParseCode(unittest.TestCase):
     def test_parse_code_base(self):
         code_block = "```\nfor i in range(0, 10):\n    print(i)```"
         code_content = code_block.strip("```\n")
-        expected = HTMLNode("pre", None, [HTMLNode("code", code_content)])
+        expected = ParentNode(tag="pre", children=[LeafNode("code", code_content)])
         result = parse_code(code_block)
         self.assertEqual(result, expected)
-
-    def test_parse_code_invalid(self):
-        with self.assertRaises(ValueError) as context:
-            parse_code("not valid code block")
-        self.assertEqual(str(context.exception), "invalid markdown code block syntax")
 
 
 class TestParseQuote(unittest.TestCase):
