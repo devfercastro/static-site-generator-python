@@ -1,9 +1,8 @@
+"""Just some file system function."""
+
 import os
 import shutil
 from pathlib import Path
-
-from markdown.extractor import extract_title
-from markdown import markdown_to_html_node
 
 
 def invalid_path_error(context):
@@ -21,8 +20,13 @@ def sync_directories(source: Path, destination: Path):
         ValueError: If source or destination paths are invalid
 
     """
+
+    def error_message(item):
+        return f"{item} must be a valid path"
+
     if not source.exists():
         invalid_path_error("source")
+
     if not destination.exists():
         invalid_path_error("destination")
 
@@ -54,33 +58,3 @@ def sync_directories(source: Path, destination: Path):
                 _copy_recursive(item_path, new_destination)
 
     _copy_recursive(source, destination)
-
-
-def generate_page(from_path: Path, template_path: Path, dest_path: Path):
-    print(f"Generating page from {from_path} to {dest_path} using {template_path}")
-    # check if path are valid
-    if not from_path.exists():
-        invalid_path_error("from_path")
-    if not template_path.exists():
-        invalid_path_error("template_path")
-
-    with open(from_path) as f:
-        markdown = f.read()
-        with open(template_path) as f:
-            template = f.read()
-
-            html_nodes = markdown_to_html_node(markdown)
-            title = extract_title(markdown)
-
-            breakpoint()
-            # reeplace placeholders
-            template.replace("{{ Title }}", title)
-            template.replace(
-                "{{ Content }}", "\n".join([node.to_html() for node in html_nodes])
-            )
-
-            # write the new html file
-            with open(dest_path, "w") as f:
-                # ensure directories exists
-                dest_path.mkdir(parents=True, exist_ok=True)
-                f.write(template)

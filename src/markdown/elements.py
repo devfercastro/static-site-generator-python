@@ -1,13 +1,14 @@
 import re
 from typing import Callable, List, Literal, Tuple
 
-from core import HTMLNode, TextNode, TextType
-from .extractor import extract_markdown_links, extract_markdown_images
+from src.core import HTMLNode, ParentNode, TextNode, TextType
+from src.core.leafnode import LeafNode
+
+from .extractor import extract_markdown_images, extract_markdown_links
 
 
-def parse_heading(block: str) -> HTMLNode:
-    """
-    Parse a markdown heading and convert it to an HTMLNode object
+def parse_heading(block: str) -> ParentNode:
+    """Parse a markdown heading and convert it to an HTMLNode object
 
     Args:
         block: A string representing a markdown heading.
@@ -15,15 +16,13 @@ def parse_heading(block: str) -> HTMLNode:
     Returns:
         HTMLNode: An HTMLNode object representing a html header
 
-    Raises:
-        ValueError: If the markdown heading is invalid
     """
-    heading_type = block.count("#")
-    heading_content = re.match(r"#{1,6} (.+)", block)
-    if heading_content:
-        return HTMLNode(f"h{heading_type}", heading_content.group(1))
+    header_level = block.count("#")
+    header_content = block.lstrip("# ")
+    # TODO: Must return a parent node with a leaf node inside.
+    # The leaf node should not have a tag
 
-    raise ValueError("invalid markdown header syntax")
+    return ParentNode(tag=f"h{header_level}", children=header_content)
 
 
 def parse_code(block: str) -> HTMLNode:
@@ -36,17 +35,10 @@ def parse_code(block: str) -> HTMLNode:
     Returns:
         HTMLNode: An HTMLNode object representing a html "code" tag nested inside a "pre" tag
 
-    Raises:
-        ValueError: If the markdown code block is invalid
     """
-    code_content = re.match(r"^(```)(.+)(```)$", block, re.DOTALL)
-    if code_content:
-        code_node = HTMLNode("code", code_content.group(2).strip())
-        pre_node = HTMLNode("pre", None, [code_node])
+    code_content = block.strip("`\n")
 
-        return pre_node
-
-    raise ValueError("invalid markdown code block syntax")
+    return ParentNode(tag="pre", children=[LeafNode("code", code_content)])
 
 
 def parse_quote(block: str) -> HTMLNode:
