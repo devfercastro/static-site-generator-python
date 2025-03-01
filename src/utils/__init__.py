@@ -1,1 +1,1 @@
-from .fs import sync_directories, generate_page
+from .fs import sync_directories

@@ -1,5 +1,3 @@
-"""Just some file system function."""
-
 import os
 import shutil
 from pathlib import Path
@@ -20,10 +18,6 @@ def sync_directories(source: Path, destination: Path):
         ValueError: If source or destination paths are invalid
 
     """
-
-    def error_message(item):
-        return f"{item} must be a valid path"
-
     if not source.exists():
         invalid_path_error("source")
 
