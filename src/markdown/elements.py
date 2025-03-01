@@ -7,22 +7,20 @@ from src.core.leafnode import LeafNode
 from .extractor import extract_markdown_images, extract_markdown_links
 
 
-def parse_heading(block: str) -> ParentNode:
+def parse_heading(marker: str, content: str) -> ParentNode:
     """Parse a markdown heading and convert it to an HTMLNode object
 
     Args:
-        block: A string representing a markdown heading.
+        marker: The string of the marker
+        content: The header text
 
     Returns:
         HTMLNode: An HTMLNode object representing a html header
 
     """
-    header_level = block.count("#")
-    header_content = block.lstrip("# ")
-    # TODO: Must return a parent node with a leaf node inside.
-    # The leaf node should not have a tag
+    level = len(marker)
 
-    return ParentNode(tag=f"h{header_level}", children=header_content)
+    return ParentNode(tag=f"h{level}", children=[LeafNode(None, content)])
 
 
 def parse_code(block: str) -> HTMLNode:
