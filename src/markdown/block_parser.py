@@ -1,6 +1,14 @@
-from typing import List
-import re
-from core import BlockType
+from typing import List, Tuple, Union
+
+from src.core import BlockType
+
+from .constants import (
+    CODE_PATTERN,
+    HEADING_PATTERN,
+    ORDERED_LIST_PATTERN,
+    QUOTE_PATTERN,
+    UNORDERED_LIST_PATTERN,
+)
 
 
 def markdown_to_blocks(markdown: str) -> List[str]:
@@ -32,7 +40,7 @@ def markdown_to_blocks(markdown: str) -> List[str]:
     return blocks
 
 
-def block_to_block_type(block: str) -> BlockType:
+def block_to_block_type(block: str) -> Tuple[BlockType, Union[str, Tuple[str, str]]]:
     """
     Determine the type of a markdown block
 
@@ -42,26 +50,20 @@ def block_to_block_type(block: str) -> BlockType:
     Returns:
         BlockType: An enumerated value representing the type of the block
     """
-    # a heading block must start with one to six "#" followed by a space, followed by anything
-    heading_regex = r"^(#{1,6} ).+"
-    # a code block must start with "```" followed by a blank character, followed by anything, followed by another blank character and ending with "```"
-    code_regex = r"^(```)\s+.+\s+(```)$"
-    # a quote block must start with ">" followed by a space, followed by anything
-    quote_regex = r"^(> ).+"
-    # an unordered list block must start with "*" or "-" followed by a space and followed by anything
-    unordered_list_regex = r"^(\* |- ).+"
-    # an ordered list block must start with a number followed by a ".", followed by a space and followed by anything
-    ordered_list_regex = r"^([0-9]+\. ).+"
+    if match := HEADING_PATTERN.match(block):
+        marker, content = match.groups()
+        return BlockType.HEADING, (marker, content)
 
-    if re.match(heading_regex, block):
-        return BlockType.HEADING
-    if re.match(code_regex, block):
-        return BlockType.CODE
-    if re.match(quote_regex, block):
-        return BlockType.QUOTE
-    if re.match(unordered_list_regex, block):
-        return BlockType.UNORDERED_LIST
-    if re.match(ordered_list_regex, block):
-        return BlockType.ORDERED_LIST
+    if match := CODE_PATTERN.match(block):
+        return BlockType.CODE, match.group(1)
 
-    return BlockType.PARAGRAPH
+    if match := QUOTE_PATTERN.match(block):
+        return BlockType.QUOTE, match.group(1)
+
+    if match := UNORDERED_LIST_PATTERN.findall(block):
+        return BlockType.UNORDERED_LIST, match
+
+    if match := ORDERED_LIST_PATTERN.findall(block):
+        return BlockType.ORDERED_LIST, match
+
+    return BlockType.PARAGRAPH, block

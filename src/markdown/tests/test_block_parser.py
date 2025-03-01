@@ -1,7 +1,7 @@
 import unittest
-from src.markdown.block_parser import markdown_to_blocks
-from src.markdown.block_parser import block_to_block_type
+
 from src.core import BlockType
+from src.markdown.block_parser import block_to_block_type, markdown_to_blocks
 
 
 class TestMarkdownToBlocks(unittest.TestCase):
@@ -71,48 +71,58 @@ class TestBlockToBlockType(unittest.TestCase):
             BlockType.PARAGRAPH,
         ]
         results = list(
-            map(lambda block: block_to_block_type(block), markdown_to_blocks(markdown))
+            map(
+                lambda block: block_to_block_type(block)[0],
+                markdown_to_blocks(markdown),
+            )
         )
         self.assertEqual(results, expected)
 
     def test_block_to_block_type_heading(self):
-        block = "# This is a heading"
-        expected = BlockType.HEADING
+        marker = "##"
+        content = "This is a h2 header"
+        block = f"{marker} {content}"
+        expected = (BlockType.HEADING, (marker, content))
         result = block_to_block_type(block)
         self.assertEqual(result, expected)
 
     def test_block_to_block_type_code(self):
-        block = "```\nprint('Hello, World!')\n```"
-        expected = BlockType.CODE
+        code = "print('Hello World!')"
+        block = f"```\n{code}\n```"
+        expected = (BlockType.CODE, code)
         result = block_to_block_type(block)
         self.assertEqual(result, expected)
 
     def test_block_to_block_type_quote(self):
-        block = "> This is a quote"
-        expected = BlockType.QUOTE
+        content = "This is a quote"
+        block = f"> {content}"
+        expected = (BlockType.QUOTE, content)
         result = block_to_block_type(block)
         self.assertEqual(result, expected)
 
     def test_block_to_block_type_unordered_list(self):
-        block = "* This is an unordered list item"
-        expected = BlockType.UNORDERED_LIST
+        content = "This is an unordered list item"
+        block = f"* {content}"
+        expected = (BlockType.UNORDERED_LIST, [content])
         result = block_to_block_type(block)
         self.assertEqual(result, expected)
 
     def test_block_to_block_type_ordered_list(self):
-        block = "1. This is an ordered list item"
-        expected = BlockType.ORDERED_LIST
+        number = "1"
+        content = "This is the first item in an ordered list"
+        block = f"{number}. {content}"
+        expected = BlockType.ORDERED_LIST, [(number, content)]
         result = block_to_block_type(block)
         self.assertEqual(result, expected)
 
     def test_block_to_block_type_paragraph(self):
         block = "This is a simple paragraph."
-        expected = BlockType.PARAGRAPH
+        expected = (BlockType.PARAGRAPH, block)
         result = block_to_block_type(block)
         self.assertEqual(result, expected)
 
     def test_block_to_block_type_empty_string(self):
         block = ""
-        expected = BlockType.PARAGRAPH
+        expected = BlockType.PARAGRAPH, ""
         result = block_to_block_type(block)
         self.assertEqual(result, expected)
