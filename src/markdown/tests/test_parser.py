@@ -26,12 +26,13 @@ class TestMarkdownToHtmlNodes(unittest.TestCase):
         {paragraph}
         """
         expected = [
-            ParentNode("h1", h1.strip("# ")),
-            ParentNode("pre", None, [LeafNode("code", code.strip("```\n"))]),
-            ParentNode("blockquote", quote.strip("> ")),
-            ParentNode("ul", None, [LeafNode("li", unordered_list.strip("* "))]),
-            ParentNode("ol", None, [LeafNode("li", ordered_list.strip("1. "))]),
-            ParentNode("p", paragraph),
+            ParentNode("h1", [LeafNode(None, h1.strip("# "))]),
+            ParentNode("pre", [LeafNode("code", code.strip("```\n"))]),
+            ParentNode("blockquote", [LeafNode(None, quote.strip("> "))]),
+            ParentNode("ul", [LeafNode("li", unordered_list.strip("* "))]),
+            ParentNode("ol", [LeafNode("li", ordered_list.strip("1. "))]),
+            ParentNode("p", [LeafNode(None, paragraph)]),
         ]
+        breakpoint()
         result = markdown_to_html_node(markdown)
         self.assertEqual(result, expected)
