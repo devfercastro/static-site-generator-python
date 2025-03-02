@@ -37,23 +37,18 @@ def parse_code(content: str) -> HTMLNode:
     return ParentNode(tag="pre", children=[LeafNode("code", content)])
 
 
-def parse_quote(block: str) -> HTMLNode:
+def parse_quote(content: str) -> HTMLNode:
     """
-    Parse a markdown quote and converts it into an HTMLNode object
+    Parse the content of a markdown quote into an HTMLNode object
 
     Args:
-        block: A string representing a markdown quote
+        content: The content of the quote
 
     Returns:
         HTMLNode: An HTMLNode object representing a html "blockquote" tag
 
-    Raises:
-        ValueError: If the markdown quote is invalid
     """
-    block_content = re.match(r"^> (.+)", block)
-    if block_content:
-        return HTMLNode("blockquote", block_content.group(1))
-    raise ValueError("invalid markdown quote syntax")
+    return ParentNode(tag="blockquote", children=[LeafNode(None, content)])
 
 
 def parse_unordered_list(block: str) -> HTMLNode:

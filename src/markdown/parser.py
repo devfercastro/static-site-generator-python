@@ -26,8 +26,7 @@ def markdown_to_html_node(markdown: str) -> List[HTMLNode]:
             case BlockType.CODE:
                 html_nodes.append(parse_code(block_content))
             case BlockType.QUOTE:
-                # TODO: must receive the content
-                html_nodes.append(parse_quote(block))
+                html_nodes.append(parse_quote(block_content))
             case BlockType.UNORDERED_LIST:
                 # TODO: must receive a list of contents
                 html_nodes.append(parse_unordered_list(block))
