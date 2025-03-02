@@ -58,10 +58,7 @@ def parse_unordered_list(list_items: List[str]) -> ParentNode:
         HTMLNode: An HTMLNode object representing several "li" tags nested inside a "ul" tag
 
     """
-    li_nodes = [
-        ParentNode(tag="li", children=[LeafNode(None, content)])
-        for content in list_items
-    ]
+    li_nodes = [LeafNode(tag="li", value=content) for content in list_items]
 
     return ParentNode(tag="ul", children=li_nodes)  # type: ignore[reportArgumentType]
 
@@ -77,7 +74,7 @@ def parse_ordered_list(list_items: List[Tuple[str, str]]) -> ParentNode:
 
     """
     li_nodes = [
-        ParentNode(tag="li", children=[LeafNode(None, content)])
+        LeafNode(tag="li", value=content)
         # get just content, ignore number
         for _, content in list_items
     ]
