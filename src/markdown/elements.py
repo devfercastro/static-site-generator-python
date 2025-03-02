@@ -1,12 +1,12 @@
 from typing import Callable, List, Literal, Tuple
 
-from src.core import HTMLNode, ParentNode, TextNode, TextType
+from src.core import ParentNode, TextNode, TextType
 from src.core.leafnode import LeafNode
 
 from .extractor import extract_markdown_images, extract_markdown_links
 
 
-def parse_heading(marker: str, content: str) -> ParentNode:
+def parse_heading(marker: str, content: str) -> LeafNode:
     """Parse a markdown heading and convert it to an HTMLNode object
 
     Args:
@@ -19,10 +19,10 @@ def parse_heading(marker: str, content: str) -> ParentNode:
     """
     level = len(marker)
 
-    return ParentNode(tag=f"h{level}", children=[LeafNode(None, content)])
+    return LeafNode(tag=f"h{level}", value=content)
 
 
-def parse_code(content: str) -> HTMLNode:
+def parse_code(content: str) -> ParentNode:
     """Parse a markdown code block into an HTMLNode object
 
     Args:
@@ -35,7 +35,7 @@ def parse_code(content: str) -> HTMLNode:
     return ParentNode(tag="pre", children=[LeafNode("code", content)])
 
 
-def parse_quote(content: str) -> HTMLNode:
+def parse_quote(content: str) -> LeafNode:
     """Parse the content of a markdown quote into an HTMLNode object
 
     Args:
@@ -45,10 +45,10 @@ def parse_quote(content: str) -> HTMLNode:
         HTMLNode: An HTMLNode object representing a html "blockquote" tag
 
     """
-    return ParentNode(tag="blockquote", children=[LeafNode(None, content)])
+    return LeafNode(tag="blockquote", value=content)
 
 
-def parse_unordered_list(list_items: List[str]) -> HTMLNode:
+def parse_unordered_list(list_items: List[str]) -> ParentNode:
     """Parse the list items of a markdown unordered list into an HTMLNode object
 
     Args:
@@ -66,7 +66,7 @@ def parse_unordered_list(list_items: List[str]) -> HTMLNode:
     return ParentNode(tag="ul", children=li_nodes)  # type: ignore[reportArgumentType]
 
 
-def parse_ordered_list(list_items: List[Tuple[str, str]]) -> HTMLNode:
+def parse_ordered_list(list_items: List[Tuple[str, str]]) -> ParentNode:
     """Parse the list items of a markdown ordered list into an HTMLNode object
 
     Args:
@@ -85,7 +85,7 @@ def parse_ordered_list(list_items: List[Tuple[str, str]]) -> HTMLNode:
     return ParentNode(tag="ol", children=li_nodes)  # type: ignore[reportArgumentType]
 
 
-def parse_paragraph(content: str) -> HTMLNode:
+def parse_paragraph(content: str) -> LeafNode:
     """Parse a markdown paragraph into an HTMLNode object
 
     Args:
@@ -95,7 +95,7 @@ def parse_paragraph(content: str) -> HTMLNode:
         HTMLNode: An HTMLNode object representing a "p" tag
 
     """
-    return ParentNode(tag="p", children=[LeafNode(None, content)])
+    return LeafNode(tag="p", value=content)
 
 
 def split_nodes(
