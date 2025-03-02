@@ -64,38 +64,26 @@ def parse_unordered_list(list_items: List[str]) -> HTMLNode:
         for content in list_items
     ]
 
-    return ParentNode(tag="ul", children=li_nodes)
+    return ParentNode(tag="ul", children=li_nodes)  # type: ignore[reportArgumentType]
 
 
-def parse_ordered_list(block: str) -> HTMLNode:
-    """
-    Parse a markdown ordered list and converts it into an HTMLNode object
+def parse_ordered_list(list_items: List[Tuple[str, str]]) -> HTMLNode:
+    """Parse the list items of a markdown ordered list into an HTMLNode object
 
     Args:
-        block: A string representing a markdown ordered list
+        list_items: The list items of the ordered list
 
     Returns:
         HTMLNode: An HTMLNode object representing several "li" tags nested inside a "ol" tag
-    Raises:
-        ValueError: If the markdown ordered list is invalid
+
     """
-    pattern = re.compile(
-        r"""
-    ^
-    \d+    # start with a number
-    \.     # followed by a dot
-    \      # followed by a space (backslash escapes exactly one space)
-    (.+)   # capture all the following characters
-    $
-    """,
-        re.VERBOSE | re.MULTILINE,
-    )
-    ordered_list = pattern.findall(block)
-    if ordered_list:
-        ordered_list_items = [HTMLNode("li", list_item) for list_item in ordered_list]
-        ordered_list_container = HTMLNode("ol", None, ordered_list_items)
-        return ordered_list_container
-    raise ValueError("invalid markdown ordered list syntax")
+    li_nodes = [
+        ParentNode(tag="li", children=[LeafNode(None, content)])
+        # get just content, ignore number
+        for _, content in list_items
+    ]
+
+    return ParentNode(tag="ol", children=li_nodes)  # type: ignore[reportArgumentType]
 
 
 def parse_paragraph(block: str) -> HTMLNode:
