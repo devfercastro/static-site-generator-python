@@ -24,8 +24,7 @@ def parse_heading(marker: str, content: str) -> ParentNode:
 
 
 def parse_code(content: str) -> HTMLNode:
-    """
-    Parse a markdown code block into an HTMLNode object
+    """Parse a markdown code block into an HTMLNode object
 
     Args:
         content: The content of the code block
@@ -38,8 +37,7 @@ def parse_code(content: str) -> HTMLNode:
 
 
 def parse_quote(content: str) -> HTMLNode:
-    """
-    Parse the content of a markdown quote into an HTMLNode object
+    """Parse the content of a markdown quote into an HTMLNode object
 
     Args:
         content: The content of the quote
@@ -51,36 +49,22 @@ def parse_quote(content: str) -> HTMLNode:
     return ParentNode(tag="blockquote", children=[LeafNode(None, content)])
 
 
-def parse_unordered_list(block: str) -> HTMLNode:
-    """
-    Parse a markdown unordered list and converts it into an HTMLNode object
+def parse_unordered_list(list_items: List[str]) -> HTMLNode:
+    """Parse the list items of a markdown unordered list into an HTMLNode object
 
     Args:
-        block: A string representing a markdown unordered list
+        list_items: The list items of the unordered list
 
     Returns:
         HTMLNode: An HTMLNode object representing several "li" tags nested inside a "ul" tag
-    Raises:
-        ValueError: If the markdown unordered list is invalid
+
     """
-    pattern = re.compile(
-        r"""
-    ^
-    [-\*]  # start with dash or asterisk
-    \      # followed by a space (backslash escapes exactly one space)
-    (.+)   # capture all the following characters
-    $
-    """,
-        re.VERBOSE | re.MULTILINE,
-    )
-    unordered_list = pattern.findall(block)
-    if unordered_list:
-        unordered_list_items = [
-            HTMLNode("li", list_item) for list_item in unordered_list
-        ]
-        unordered_list_container = HTMLNode("ul", None, unordered_list_items)
-        return unordered_list_container
-    raise ValueError("invalid markdown unordered list syntax")
+    li_nodes = [
+        ParentNode(tag="li", children=[LeafNode(None, content)])
+        for content in list_items
+    ]
+
+    return ParentNode(tag="ul", children=li_nodes)
 
 
 def parse_ordered_list(block: str) -> HTMLNode:
