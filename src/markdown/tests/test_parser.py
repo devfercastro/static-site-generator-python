@@ -33,6 +33,5 @@ class TestMarkdownToHtmlNodes(unittest.TestCase):
             ParentNode("ol", [LeafNode("li", ordered_list.strip("1. "))]),
             ParentNode("p", [LeafNode(None, paragraph)]),
         ]
-        breakpoint()
         result = markdown_to_html_node(markdown)
         self.assertEqual(result, expected)

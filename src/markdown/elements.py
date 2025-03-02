@@ -23,20 +23,18 @@ def parse_heading(marker: str, content: str) -> ParentNode:
     return ParentNode(tag=f"h{level}", children=[LeafNode(None, content)])
 
 
-def parse_code(block: str) -> HTMLNode:
+def parse_code(content: str) -> HTMLNode:
     """
-    Parse a markdown code block and convert it into an HTMLNode object
+    Parse a markdown code block into an HTMLNode object
 
     Args:
-        block: A string representing a markdown code block
+        content: The content of the code block
 
     Returns:
         HTMLNode: An HTMLNode object representing a html "code" tag nested inside a "pre" tag
 
     """
-    code_content = block.strip("`\n")
-
-    return ParentNode(tag="pre", children=[LeafNode("code", code_content)])
+    return ParentNode(tag="pre", children=[LeafNode("code", content)])
 
 
 def parse_quote(block: str) -> HTMLNode:

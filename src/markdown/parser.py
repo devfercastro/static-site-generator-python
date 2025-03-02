@@ -19,14 +19,12 @@ def markdown_to_html_node(markdown: str) -> List[HTMLNode]:
 
     for block in markdown_blocks:
         block_type, block_content = block_to_block_type(block)
+
         match block_type:
             case BlockType.HEADING:
-                # TODO: must receive the marker and the content
-                breakpoint()
                 html_nodes.append(parse_heading(*block_content))
             case BlockType.CODE:
-                # TODO: must receive the content
-                html_nodes.append(parse_code(block))
+                html_nodes.append(parse_code(block_content))
             case BlockType.QUOTE:
                 # TODO: must receive the content
                 html_nodes.append(parse_quote(block))
