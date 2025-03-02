@@ -20,9 +20,9 @@ from src.markdown.inline_parser import split_nodes_delimiter
 
 class TestParseHeading(unittest.TestCase):
     def test_parse_heading_base(self):
-        headers = [f"{"#" * i} heading {i}" for i in range(1, 7)]
-        expected = [ParentNode(f"h{i}", f"heading {i}") for i in range(1, 7)]
-        result = [parse_heading(header) for header in headers]
+        headers = [(f"{'#' * i}", f"heading {i}") for i in range(1, 7)]
+        expected = [LeafNode(f"h{len(header[0])}", header[1]) for header in headers]
+        result = [parse_heading(header[0], header[1]) for header in headers]
         self.assertEqual(result, expected)
 
 
@@ -31,47 +31,35 @@ class TestParseCode(unittest.TestCase):
         code_block = "```\nfor i in range(0, 10):\n    print(i)```"
         code_content = code_block.strip("```\n")
         expected = ParentNode(tag="pre", children=[LeafNode("code", code_content)])
-        result = parse_code(code_block)
+        result = parse_code(code_content)
         self.assertEqual(result, expected)
 
 
 class TestParseQuote(unittest.TestCase):
     def test_parse_quote_base(self):
-        quote = "> this is a quote"
-        quote_content = "this is a quote"
-        expected = HTMLNode("blockquote", quote_content)
-        result = parse_quote(quote)
+        content = "this is a quote"
+        expected = LeafNode("blockquote", content)
+        result = parse_quote(content)
         self.assertEqual(result, expected)
 
 
 class TestParseUnorderedList(unittest.TestCase):
     def test_parse_unordered_list_base(self):
-        list_items = [f"Item {i}" for i in range(1, 11)]
-
-        unordered_list = reduce(
-            lambda acc, list_item: acc + f"{random.choice(["-", "*"])} {list_item}\n",
-            list_items,
-            "",
+        list_items = [f"item {i}" for i in range(1, 11)]
+        expected = ParentNode(
+            "ul", [LeafNode("li", list_item) for list_item in list_items]
         )
-        expected = HTMLNode(
-            "ul", None, [HTMLNode("li", list_item) for list_item in list_items]
-        )
-        result = parse_unordered_list(unordered_list)
+        result = parse_unordered_list(list_items)
         self.assertEqual(result, expected)
 
 
 class TestParseOrderedList(unittest.TestCase):
     def test_parse_ordered_list(self):
-        list_items = [f"Item {i}" for i in range(1, 11)]
-        ordered_list = reduce(
-            lambda acc, list_item: acc + f"{list_item[0] + 1}. {list_item[1]}\n",
-            enumerate(list_items),
-            "",
+        list_items = [(str(i), f"item {i}") for i in range(1, 11)]
+        expected = ParentNode(
+            "ol", [LeafNode("li", list_item[1]) for list_item in list_items]
         )
-        expected = HTMLNode(
-            "ol", None, [HTMLNode("li", list_item) for list_item in list_items]
-        )
-        result = parse_ordered_list(ordered_list)
+        result = parse_ordered_list(list_items)
         self.assertEqual(result, expected)
 
 
@@ -198,8 +186,7 @@ class TestSplitNodesImage(unittest.TestCase):
     def test_split_nodes_image_multiple_images(self):
         """Test when there are multiple images in the text."""
         node = TextNode(
-            f"This is text with an image {
-                self.image1.raw} and {self.image2.raw}",
+            f"This is text with an image {self.image1.raw} and {self.image2.raw}",
             TextType.TEXT,
         )
         expected = [
@@ -229,8 +216,7 @@ class TestSplitNodesImage(unittest.TestCase):
     def test_split_nodes_image_consecutive_images(self):
         """Test when there are consecutive images in the text."""
         node = TextNode(
-            f"{self.image1.raw}{self.image2.raw}{
-                self.image3.raw}",
+            f"{self.image1.raw}{self.image2.raw}{self.image3.raw}",
             TextType.TEXT,
         )
         expected = [

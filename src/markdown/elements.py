@@ -52,7 +52,7 @@ def parse_unordered_list(list_items: List[str]) -> ParentNode:
     """Parse the list items of a markdown unordered list into an HTMLNode object
 
     Args:
-        list_items: The list items of the unordered list
+        list_items: The list items of the unordered list without the marker
 
     Returns:
         HTMLNode: An HTMLNode object representing several "li" tags nested inside a "ul" tag
