@@ -2,6 +2,9 @@ import os
 import shutil
 from pathlib import Path
 
+from markdown.extractor import extract_title
+from markdown.parser import markdown_to_html_node
+
 
 def invalid_path_error(context):
     raise ValueError(f"{context} must be a valid path")
@@ -52,3 +55,46 @@ def sync_directories(source: Path, destination: Path):
                 _copy_recursive(item_path, new_destination)
 
     _copy_recursive(source, destination)
+
+
+def generate_page(from_path: Path, template_path: Path, dest_path: Path):
+    """Generate an HTML page from a markdown file using a template
+
+    Args:
+        from_path: The path of the markdown file
+        template_path: The path of the HTML template file
+        dest_path: The path where the generated HTML file will be
+
+    Raises:
+        ValueError: If from_path or template_path are invalid paths
+
+    """
+    print(f"Generating page from {from_path} to {dest_path} using {template_path}")
+    # check if path are valid
+    if not from_path.exists():
+        invalid_path_error("from_path")
+    if not template_path.exists():
+        invalid_path_error("template_path")
+
+    # read the markdown
+    with open(from_path) as f:
+        markdown = f.read()
+    # read the template
+    with open(template_path) as f:
+        template = f.read()
+
+    # extract the nodes from markdown
+    html_nodes = markdown_to_html_node(markdown)
+    # extract the title from markdown
+    title = extract_title(markdown)
+    # build html content
+    html_content = "\n".join([node.to_html() for node in html_nodes])
+
+    # replace placeholders
+    template.replace("{{ Title }}", title)
+    template.replace("{{ Content }}", html_content)
+
+    # write the new html file
+    with open(dest_path, "w") as f:
+        dest_path.mkdir(parents=True, exist_ok=True)
+        f.write(template)
