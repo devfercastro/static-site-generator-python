@@ -1,4 +1,3 @@
-import re
 from typing import Callable, List, Literal, Tuple
 
 from src.core import HTMLNode, ParentNode, TextNode, TextType
@@ -86,17 +85,17 @@ def parse_ordered_list(list_items: List[Tuple[str, str]]) -> HTMLNode:
     return ParentNode(tag="ol", children=li_nodes)  # type: ignore[reportArgumentType]
 
 
-def parse_paragraph(block: str) -> HTMLNode:
-    """
-    Parse a markdown paragraph and converts it into an HTMLNode object
+def parse_paragraph(content: str) -> HTMLNode:
+    """Parse a markdown paragraph into an HTMLNode object
 
     Args:
-        block: A string representing a markdown ordered list
+        content: The content of the paragraph
 
     Returns:
         HTMLNode: An HTMLNode object representing a "p" tag
+
     """
-    return HTMLNode("p", block)
+    return ParentNode(tag="p", children=[LeafNode(None, content)])
 
 
 def split_nodes(

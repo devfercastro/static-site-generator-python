@@ -32,7 +32,6 @@ def markdown_to_html_node(markdown: str) -> List[HTMLNode]:
             case BlockType.ORDERED_LIST:
                 html_nodes.append(parse_ordered_list(block_content))  # type: ignore[reportArgumentType]
             case BlockType.PARAGRAPH:
-                # TODO: must receive the content
                 html_nodes.append(parse_paragraph(block_content))  # type: ignore[reportArgumentType]
             case _:
                 raise ValueError("not matched block type")

@@ -26,6 +26,7 @@ class TestMarkdownToHtmlNodes(unittest.TestCase):
         {paragraph}
         """
         expected = [
+            # TODO: h1 and p must be just a leafnode i.e: LeafNode(tag="h1", value="this is a h1 header")
             ParentNode("h1", [LeafNode(None, h1.strip("# "))]),
             ParentNode("pre", [LeafNode("code", code.strip("```\n"))]),
             ParentNode("blockquote", [LeafNode(None, quote.strip("> "))]),
