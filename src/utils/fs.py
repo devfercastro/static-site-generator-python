@@ -2,8 +2,7 @@ import os
 import shutil
 from pathlib import Path
 
-from markdown.extractor import extract_title
-from markdown.parser import markdown_to_html_node
+from markdown import extract_title, markdown_to_html_node
 
 
 def invalid_path_error(context):
@@ -91,10 +90,9 @@ def generate_page(from_path: Path, template_path: Path, dest_path: Path):
     html_content = "\n".join([node.to_html() for node in html_nodes])
 
     # replace placeholders
-    template.replace("{{ Title }}", title)
-    template.replace("{{ Content }}", html_content)
+    template = template.replace("{{ Title }}", title)
+    template = template.replace("{{ Content }}", html_content)
 
     # write the new html file
     with open(dest_path, "w") as f:
-        dest_path.mkdir(parents=True, exist_ok=True)
         f.write(template)
