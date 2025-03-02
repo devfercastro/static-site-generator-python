@@ -1,6 +1,6 @@
 from typing import List, Tuple, Union
 
-from src.core import BlockType
+from core import BlockType
 
 from .constants import (
     CODE_PATTERN,

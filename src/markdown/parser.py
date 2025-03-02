@@ -1,6 +1,6 @@
 from typing import List
 
-from src.core import BlockType, HTMLNode
+from core import BlockType, HTMLNode
 
 from .block_parser import block_to_block_type, markdown_to_blocks
 from .elements import (

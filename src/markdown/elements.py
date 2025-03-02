@@ -1,7 +1,6 @@
 from typing import Callable, List, Literal, Tuple
 
-from src.core import ParentNode, TextNode, TextType
-from src.core.leafnode import LeafNode
+from core import ParentNode, LeafNode, TextNode, TextType
 
 from .extractor import extract_markdown_images, extract_markdown_links
 
