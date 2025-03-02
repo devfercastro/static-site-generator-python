@@ -3,6 +3,8 @@ from typing import Dict
 
 
 class LeafNode(HTMLNode):
+    """Represents a single HTML tag with no children. For example, a simple `<p>` tag."""
+
     def __init__(
         self,
         tag: str | None = None,

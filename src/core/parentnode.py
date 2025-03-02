@@ -3,6 +3,8 @@ from .htmlnode import HTMLNode
 
 
 class ParentNode(HTMLNode):
+    """Represents a HTML node with nested children. For example, a `<ul>` tag with multiple childrens `<li>` tags."""
+
     def __init__(
         self,
         tag: str | None = None,
