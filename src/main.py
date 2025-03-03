@@ -26,6 +26,6 @@ if __name__ == "__main__":
 
     markdown = Path("content/index.md")
     template = Path("template.html")
-    output = Path("output/index.html")
+    output = Path("public/index.html")
 
     generate_page(markdown, template, output)
