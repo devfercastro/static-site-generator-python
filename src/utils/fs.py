@@ -74,6 +74,8 @@ def generate_page(from_path: Path, template_path: Path, dest_path: Path):
         invalid_path_error("from_path")
     if not template_path.exists():
         invalid_path_error("template_path")
+    # create `dest_path`'s parents if nedeed
+    dest_path.parent.mkdir(parents=True, exist_ok=True)
 
     # read the markdown
     with open(from_path) as f:
