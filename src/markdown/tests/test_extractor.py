@@ -1,6 +1,6 @@
 import unittest
 
-from src.markdown.extractor import (
+from markdown.extractor import (
     extract_markdown_images,
     extract_markdown_links,
     extract_title,

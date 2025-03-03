@@ -1,7 +1,7 @@
 import unittest
 
-from src.core import LeafNode, ParentNode
-from src.markdown.parser import markdown_to_html_node
+from core import LeafNode, ParentNode
+from markdown.parser import markdown_to_html_node
 
 
 class TestMarkdownToHtmlNodes(unittest.TestCase):

@@ -1,7 +1,7 @@
 import unittest
 
-from src.core import BlockType
-from src.markdown.block_parser import block_to_block_type, markdown_to_blocks
+from core import BlockType
+from markdown.block_parser import block_to_block_type, markdown_to_blocks
 
 
 class TestMarkdownToBlocks(unittest.TestCase):

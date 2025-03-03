@@ -1,5 +1,3 @@
-"""Just the main file."""
-
 from pathlib import Path
 
 from core import TextNode, TextType

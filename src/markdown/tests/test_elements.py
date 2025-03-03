@@ -1,11 +1,8 @@
-import random
 import re
 import unittest
-from functools import reduce
 
-from src.core import HTMLNode, ParentNode, TextNode, TextType
-from src.core.leafnode import LeafNode
-from src.markdown.elements import (
+from core import HTMLNode, LeafNode, ParentNode, TextNode, TextType
+from markdown.elements import (
     parse_code,
     parse_heading,
     parse_ordered_list,
@@ -15,7 +12,7 @@ from src.markdown.elements import (
     split_nodes_image,
     split_nodes_link,
 )
-from src.markdown.inline_parser import split_nodes_delimiter
+from markdown.inline_parser import split_nodes_delimiter
 
 
 class TestParseHeading(unittest.TestCase):

@@ -1,7 +1,7 @@
 import unittest
 
-from src.core.parentnode import ParentNode
-from src.core.leafnode import LeafNode
+from core.parentnode import ParentNode
+from core.leafnode import LeafNode
 
 
 class TestParentNode(unittest.TestCase):
@@ -26,8 +26,7 @@ class TestParentNode(unittest.TestCase):
         )
         with self.assertRaises(ValueError) as context:
             node.to_html()
-        self.assertEqual(str(context.exception),
-                         "ParentNode must have childrens")
+        self.assertEqual(str(context.exception), "ParentNode must have childrens")
 
     def test_invalid_parentnode_nested_no_tag(self):
         inner_parent = ParentNode(
@@ -49,8 +48,7 @@ class TestParentNode(unittest.TestCase):
         outer_parent = ParentNode(tag="div", children=[inner_parent])
         with self.assertRaises(ValueError) as context:
             outer_parent.to_html()
-        self.assertEqual(str(context.exception),
-                         "ParentNode must have childrens")
+        self.assertEqual(str(context.exception), "ParentNode must have childrens")
 
     def test_valid_parentnode_multiple_childrens_no_props(self):
         node = ParentNode(
@@ -93,19 +91,16 @@ class TestParentNode(unittest.TestCase):
         )
         inner_parent2 = ParentNode(
             tag="p",
-            children=[LeafNode("b", "Bold text"),
-                      LeafNode(None, "Normal text")],
+            children=[LeafNode("b", "Bold text"), LeafNode(None, "Normal text")],
         )
-        outer_parent = ParentNode(
-            tag="div", children=[inner_parent, inner_parent2])
+        outer_parent = ParentNode(tag="div", children=[inner_parent, inner_parent2])
         expected = "<div><p><b>Bold text</b>Normal text<i>italic text</i>Normal text</p><p><b>Bold text</b>Normal text</p></div>"
         self.assertEqual(outer_parent.to_html(), expected)
 
     def test_valid_parentnode_nested_multiple_levels(self):
         innermost_parent = ParentNode(
             tag="span",
-            children=[LeafNode("b", "Bold text"),
-                      LeafNode(None, "Normal text")],
+            children=[LeafNode("b", "Bold text"), LeafNode(None, "Normal text")],
         )
         inner_parent = ParentNode(tag="p", children=[innermost_parent])
         outer_parent = ParentNode(tag="div", children=[inner_parent])
