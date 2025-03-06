@@ -1,7 +1,7 @@
 import re
 import unittest
 
-from core import HTMLNode, LeafNode, ParentNode, TextNode, TextType
+from core import LeafNode, ParentNode, TextNode, TextType
 from markdown.elements import (
     parse_code,
     parse_heading,
@@ -18,7 +18,10 @@ from markdown.inline_parser import split_nodes_delimiter
 class TestParseHeading(unittest.TestCase):
     def test_parse_heading_base(self):
         headers = [(f"{'#' * i}", f"heading {i}") for i in range(1, 7)]
-        expected = [LeafNode(f"h{len(header[0])}", header[1]) for header in headers]
+        expected = [
+            ParentNode(f"h{len(header[0])}", children=[LeafNode(None, header[1])])
+            for header in headers
+        ]
         result = [parse_heading(header[0], header[1]) for header in headers]
         self.assertEqual(result, expected)
 
@@ -35,7 +38,7 @@ class TestParseCode(unittest.TestCase):
 class TestParseQuote(unittest.TestCase):
     def test_parse_quote_base(self):
         content = "this is a quote"
-        expected = LeafNode("blockquote", content)
+        expected = ParentNode(tag="blockquote", children=[LeafNode(None, content)])
         result = parse_quote(content)
         self.assertEqual(result, expected)
 
@@ -44,7 +47,11 @@ class TestParseUnorderedList(unittest.TestCase):
     def test_parse_unordered_list_base(self):
         list_items = [f"item {i}" for i in range(1, 11)]
         expected = ParentNode(
-            "ul", [LeafNode("li", list_item) for list_item in list_items]
+            "ul",
+            [
+                ParentNode(tag="li", children=[LeafNode(None, list_item)])
+                for list_item in list_items
+            ],
         )
         result = parse_unordered_list(list_items)
         self.assertEqual(result, expected)
@@ -54,7 +61,11 @@ class TestParseOrderedList(unittest.TestCase):
     def test_parse_ordered_list(self):
         list_items = [(str(i), f"item {i}") for i in range(1, 11)]
         expected = ParentNode(
-            "ol", [LeafNode("li", list_item[1]) for list_item in list_items]
+            tag="ol",
+            children=[
+                ParentNode("li", children=[LeafNode(None, list_item[1])])
+                for list_item in list_items
+            ],
         )
         result = parse_ordered_list(list_items)
         self.assertEqual(result, expected)
@@ -63,7 +74,7 @@ class TestParseOrderedList(unittest.TestCase):
 class TestParseParagraph(unittest.TestCase):
     def test_parse_paragraph(self):
         paragraph = "this is some text"
-        expected = HTMLNode("p", paragraph)
+        expected = ParentNode(tag="p", children=[LeafNode(None, paragraph)])
         result = parse_paragraph(paragraph)
         self.assertEqual(result, expected)
 
