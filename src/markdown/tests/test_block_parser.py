@@ -1,4 +1,5 @@
 import unittest
+from textwrap import dedent
 
 from core import BlockType
 from markdown.block_parser import block_to_block_type, markdown_to_blocks
@@ -6,7 +7,7 @@ from markdown.block_parser import block_to_block_type, markdown_to_blocks
 
 class TestMarkdownToBlocks(unittest.TestCase):
     def test_markdown_to_blocks_multiple(self):
-        markdown = """
+        markdown = dedent("""
             # This is a heading
 
             This is a paragraph of text. It has some **bold** and *italic* words inside of it.
@@ -14,7 +15,7 @@ class TestMarkdownToBlocks(unittest.TestCase):
             * This is the first list item in a list block
             * This is a list item
             * This is another list item
-        """
+        """)
         expected = [
             "# This is a heading",
             "This is a paragraph of text. It has some **bold** and *italic* words inside of it.",
