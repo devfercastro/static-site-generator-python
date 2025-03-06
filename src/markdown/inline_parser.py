@@ -2,8 +2,6 @@ from typing import List
 
 from core import TextNode, TextType
 
-from .elements import split_nodes_image, split_nodes_link
-
 
 def split_nodes_delimiter(
     old_nodes: List[TextNode], delimiter: str, text_type: TextType
@@ -42,6 +40,8 @@ def split_nodes_delimiter(
 
 
 def text_to_textnodes(text: str) -> List[TextNode]:
+    from .elements import split_nodes_image, split_nodes_link
+
     if text == "":
         raise ValueError("cannot be empty")
 
