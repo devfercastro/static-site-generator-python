@@ -1,97 +1,151 @@
 from typing import Callable, List, Literal, Tuple
 
 from core import ParentNode, LeafNode, TextNode, TextType
+from markdown.inline_parser import text_to_textnodes
 
 from .extractor import extract_markdown_images, extract_markdown_links
 
 
-def parse_heading(marker: str, content: str) -> LeafNode:
-    """Parse a markdown heading and convert it to an HTMLNode object
+def parse_inline(inline_content: str, exclude: List[TextType] = []) -> List[LeafNode]:
+    """Converts inline content into a list of LeafNode objects representing HTML elements.
+
+    Args:
+        inline_content: The string containing inline content to be parsed
+
+    Returns:
+        List[LeafNode]: A list of LeafNode objects representing the structured content.
+
+    """
+    # extract the text nodes: bold, italic, images, links, etc.
+    text_nodes = text_to_textnodes(inline_content)
+    parsed_nodes: List[LeafNode] = []
+
+    # for each text node
+    for node in text_nodes:
+        content = None
+        tag = None
+        props = None
+
+        # if it's specify to be excluded or it's just normal text, append it as a normal text html leaf node
+        if node.text_type in exclude or node.text_type == TextType.TEXT:
+            parsed_nodes.append(LeafNode(None, node.text))
+            continue
+
+        # otherwise append as a special html node
+        match node.text_type:
+            case TextType.BOLD:
+                tag = "b"
+                content = node.text
+            case TextType.ITALIC:
+                tag = "i"
+                content = node.text
+            case TextType.CODE:
+                tag = "code"
+                content = node.text
+            case TextType.LINK:
+                tag = "a"
+                content = node.text
+                props = {"href": node.url}
+            # Not needed
+            # case TextType.IMAGE:
+            #     tag = "img"
+            #     props = {"src": node.url, "alt": node.text}
+            #
+
+        parsed_nodes.append(LeafNode(tag, content, props))
+
+    return parsed_nodes
+
+
+def parse_heading(marker: str, content: str):
+    """Parse a markdown heading and convert it to an ParentNode object
 
     Args:
         marker: The string of the marker
         content: The header text
 
     Returns:
-        HTMLNode: An HTMLNode object representing a html header
+        ParentNode: An ParentNode object representing a html header
 
     """
     level = len(marker)
 
-    return LeafNode(tag=f"h{level}", value=content)
+    return ParentNode(tag=f"h{level}", children=parse_inline(content))
 
 
-def parse_code(content: str) -> ParentNode:
-    """Parse a markdown code block into an HTMLNode object
+def parse_code(content: str):
+    """Parse a markdown code block into an ParentNode object
 
     Args:
         content: The content of the code block
 
     Returns:
-        HTMLNode: An HTMLNode object representing a html "code" tag nested inside a "pre" tag
+        ParentNode: An ParentNode object representing a html "code" tag nested inside a "pre" tag
 
     """
     return ParentNode(tag="pre", children=[LeafNode("code", content)])
 
 
-def parse_quote(content: str) -> LeafNode:
-    """Parse the content of a markdown quote into an HTMLNode object
+def parse_quote(content: str):
+    """Parse the content of a markdown quote into an ParentNode object
 
     Args:
         content: The content of the quote
 
     Returns:
-        HTMLNode: An HTMLNode object representing a html "blockquote" tag
+        ParentNode: An ParentNode object representing a html "blockquote" tag
 
     """
-    return LeafNode(tag="blockquote", value=content)
+    return ParentNode(tag="blockquote", children=parse_inline(content))
 
 
-def parse_unordered_list(list_items: List[str]) -> ParentNode:
-    """Parse the list items of a markdown unordered list into an HTMLNode object
+def parse_unordered_list(list_items: List[str]):
+    """Parse the list items of a markdown unordered list into an ParentNode object
 
     Args:
         list_items: The list items of the unordered list without the marker
 
     Returns:
-        HTMLNode: An HTMLNode object representing several "li" tags nested inside a "ul" tag
+        ParentNode: An ParentNode object representing several "li" tags nested inside a "ul" tag
 
     """
-    li_nodes = [LeafNode(tag="li", value=content) for content in list_items]
+    li_nodes = [
+        ParentNode(tag="li", children=parse_inline(content)) for content in list_items
+    ]
 
-    return ParentNode(tag="ul", children=li_nodes)  # type: ignore[reportArgumentType]
+    return ParentNode(tag="ul", children=li_nodes)
 
 
-def parse_ordered_list(list_items: List[Tuple[str, str]]) -> ParentNode:
-    """Parse the list items of a markdown ordered list into an HTMLNode object
+def parse_ordered_list(list_items: List[Tuple[str, str]]):
+    """Parse the list items of a markdown ordered list into an ParentNode object
 
     Args:
         list_items: The list items of the ordered list
 
     Returns:
-        HTMLNode: An HTMLNode object representing several "li" tags nested inside a "ol" tag
+        ParentNode: An ParentNode object representing several "li" tags nested inside a "ol" tag
 
     """
     li_nodes = [
-        LeafNode(tag="li", value=content)
+        ParentNode(tag="li", children=parse_inline(content))
         # get just content, ignore number
         for _, content in list_items
     ]
 
-    return ParentNode(tag="ol", children=li_nodes)  # type: ignore[reportArgumentType]
+    return ParentNode(tag="ol", children=li_nodes)
 
 
-def parse_paragraph(content: str) -> LeafNode:
-    """Parse a markdown paragraph into an HTMLNode object
+def parse_paragraph(content: str):
+    """Parse a markdown paragraph into an ParentNode object
 
     Args:
         content: The content of the paragraph
 
     Returns:
-        HTMLNode: An HTMLNode object representing a "p" tag
+        ParentNode: An ParentNode object representing a "p" tag
 
     """
-    return LeafNode(tag="p", value=content)
+    return ParentNode(tag="p", children=parse_inline(content))
 
 
 def split_nodes(

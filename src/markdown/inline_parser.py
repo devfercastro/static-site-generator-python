@@ -1,5 +1,7 @@
 from typing import List
+
 from core import TextNode, TextType
+
 from .elements import split_nodes_image, split_nodes_link
 
 
