@@ -1,4 +1,5 @@
 import unittest
+from textwrap import dedent
 
 from core import LeafNode, ParentNode
 from markdown.parser import markdown_to_html_node
@@ -12,7 +13,7 @@ class TestMarkdownToHtmlNodes(unittest.TestCase):
         unordered_list = "* unordered list item"
         ordered_list = "1. ordered list item"
         paragraph = "some text that represents a paragraph"
-        markdown = f"""
+        markdown = dedent(f"""
         {h1}
 
         {code}
@@ -24,7 +25,7 @@ class TestMarkdownToHtmlNodes(unittest.TestCase):
         {ordered_list}
 
         {paragraph}
-        """
+        """)
         expected = [
             ParentNode(tag="h1", children=[LeafNode(None, h1.strip("# "))]),
             ParentNode("pre", [LeafNode("code", code.strip("```\n"))]),
