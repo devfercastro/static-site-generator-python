@@ -16,10 +16,14 @@ class LeafNode(HTMLNode):
 
     def to_html(self) -> str:
         """Renders a leaf node as an HTML string"""
-        if self.value is None and self.tag != "img":
+        props_parsed = self.props_to_html()
+
+        if self.tag == "img":
+            return f"<{self.tag}{props_parsed}>"
+
+        if self.value is None:
             raise ValueError("Leaf node must have a value")
         if self.tag is None:
             return self.value
 
-        props_parsed = self.props_to_html()
         return f"<{self.tag}{props_parsed}>{self.value}</{self.tag}>"
