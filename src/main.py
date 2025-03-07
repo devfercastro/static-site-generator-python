@@ -1,7 +1,7 @@
 from pathlib import Path
 
 from core import TextNode, TextType
-from utils import sync_directories, generate_page
+from utils import generate_page_recursive, sync_directories
 
 
 def main():
@@ -22,10 +22,11 @@ if __name__ == "__main__":
     # Create the directory along with any necessary parent directories.
     destination.mkdir(parents=True, exist_ok=True)
 
+    # cleans the destination, then syncs the contents
     sync_directories(Path("static"), destination)
 
-    markdown = Path("content/index.md")
+    markdown = Path("content/")
     template = Path("template.html")
-    output = Path("public/index.html")
+    output = Path("public/")
 
-    generate_page(markdown, template, output)
+    generate_page_recursive(markdown, template, output)
