@@ -1,6 +1,6 @@
 from typing import Callable, List, Literal, Tuple
 
-from core import ParentNode, LeafNode, TextNode, TextType
+from core import LeafNode, ParentNode, TextNode, TextType
 from markdown.inline_parser import text_to_textnodes
 
 from .extractor import extract_markdown_images, extract_markdown_links
@@ -46,11 +46,9 @@ def parse_inline(inline_content: str, exclude: List[TextType] = []) -> List[Leaf
                 tag = "a"
                 content = node.text
                 props = {"href": node.url}
-            # Not needed
-            # case TextType.IMAGE:
-            #     tag = "img"
-            #     props = {"src": node.url, "alt": node.text}
-            #
+            case TextType.IMAGE:
+                tag = "img"
+                props = {"src": node.url, "alt": node.text}
 
         parsed_nodes.append(LeafNode(tag, content, props))
 
@@ -145,7 +143,13 @@ def parse_paragraph(content: str):
         ParentNode: An ParentNode object representing a "p" tag
 
     """
-    return ParentNode(tag="p", children=parse_inline(content))
+    children = parse_inline(content)
+
+    # Prevent to return a link/image wrapped into a "p" tag
+    if len(children) == 1 and (children[0].tag == "a" or children[0].tag == "img"):
+        return children[0]
+
+    return ParentNode(tag="p", children=children)
 
 
 def split_nodes(
