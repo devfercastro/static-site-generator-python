@@ -1,5 +1,6 @@
-from .htmlnode import HTMLNode
 from typing import Dict
+
+from .htmlnode import HTMLNode
 
 
 class LeafNode(HTMLNode):
@@ -14,10 +15,8 @@ class LeafNode(HTMLNode):
         super().__init__(tag=tag, value=value, children=None, props=props)
 
     def to_html(self) -> str:
-        """
-        Renders a leaf node as an HTML string
-        """
-        if self.value is None:
+        """Renders a leaf node as an HTML string"""
+        if self.value is None and self.tag != "img":
             raise ValueError("Leaf node must have a value")
         if self.tag is None:
             return self.value
