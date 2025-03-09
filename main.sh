@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # Default values
+BASEPATH="/"
 SOURCE="content"
 TEMPLATE="template.html"
 STATIC="static"
@@ -48,7 +49,7 @@ done
 
 # Run the static site generator Python script with the configured params
 # Pass the arguments with their respective flags
-python3 src/main.py --source "$SOURCE" --template "$TEMPLATE" --static "$STATIC" --output "$OUTPUT"
+python3 src/main.py "/$BASEPATH/" --source "$SOURCE" --template "$TEMPLATE" --static "$STATIC" --output "$OUTPUT"
 
 # Change to the output directory and start a simple HTTP server
 cd "$OUTPUT" && python3 -m http.server "$PORT"

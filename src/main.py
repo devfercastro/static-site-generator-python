@@ -7,6 +7,13 @@ from utils import generate_page_recursive, sync_directories
 def main():
     parser = argparse.ArgumentParser(description="Static Site Generator")
     parser.add_argument(
+        "--basepath",
+        type=str,
+        nargs="?",
+        default="/",
+        help="Base path for relative links (default: '/')",
+    )
+    parser.add_argument(
         "--source",
         type=str,
         default="content",
@@ -27,12 +34,13 @@ def main():
     parser.add_argument(
         "--output",
         type=str,
-        default="public",
-        help="Path to output directory (default: 'public')",
+        default="docs",
+        help="Path to output directory (default: 'docs')",
     )
 
     args = parser.parse_args()
 
+    basepath = args.basepath
     source = Path(args.source)
     template = Path(args.template)
     statics = Path(args.static)
@@ -45,7 +53,7 @@ def main():
     # cleans the destination, then syncs the contents
     sync_directories(statics, output)
 
-    generate_page_recursive(source, template, output)
+    generate_page_recursive(source, template, output, basepath)
 
 
 if __name__ == "__main__":

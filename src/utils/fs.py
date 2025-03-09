@@ -56,13 +56,16 @@ def sync_directories(source: Path, destination: Path):
     _copy_recursive(source, destination)
 
 
-def generate_page(from_path: Path, template_path: Path, dest_path: Path):
+def generate_page(
+    from_path: Path, template_path: Path, dest_path: Path, basepath: str = "/"
+):
     """Generate an HTML page from a markdown file using a template
 
     Args:
         from_path: The path of the markdown file
         template_path: The path of the HTML template file
         dest_path: The path where the generated HTML file will be
+        basepath: The base path for relative URLs (default: "/")
 
     Raises:
         ValueError: If from_path or template_path are invalid paths
@@ -95,13 +98,20 @@ def generate_page(from_path: Path, template_path: Path, dest_path: Path):
     template = template.replace("{{ Title }}", title)
     template = template.replace("{{ Content }}", html_content)
 
+    # update URls to use the basepath
+    template = template.replace('href="/', f'href="{basepath}')
+    template = template.replace('src="/', f'src="{basepath}')
+
     # write the new html file
     with open(dest_path, "w") as f:
         f.write(template)
 
 
 def generate_page_recursive(
-    dir_path_content: Path, template_path: Path, dest_dir_path: Path
+    dir_path_content: Path,
+    template_path: Path,
+    dest_dir_path: Path,
+    basepath: str = "/",
 ):
     """Converts markdown files from a source directory to HTML using a template and puts them in a destination directory
 
@@ -140,7 +150,7 @@ def generate_page_recursive(
             if item_path.is_file():
                 # Generated file name
                 new_file = item_path.stem + ".html"
-                generate_page(item_path, template_path, dest_path / new_file)
+                generate_page(item_path, template_path, dest_path / new_file, basepath)
             # If is a directory, continue recursion
             elif item_path.is_dir():
                 _process_directory(item_path, dest_path / item_path.name)
