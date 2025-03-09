@@ -7,7 +7,7 @@ from utils import generate_page_recursive, sync_directories
 def main():
     parser = argparse.ArgumentParser(description="Static Site Generator")
     parser.add_argument(
-        "--basepath",
+        "basepath",
         type=str,
         nargs="?",
         default="/",
